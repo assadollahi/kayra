@@ -1,9 +1,7 @@
 # kayra
 An easy to modify, 3D printable open-source humanoid robot evolved by the community:
 
-<p align="center">
-<iframe width="560" height="315" src="https://youtube.com/shorts/kCMSRGjK1cM" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-</p>
+![video](https://youtube.com/shorts/kCMSRGjK1cM)
  
 - can walk nearly as fast as a human toddler
 - can use the arms to lift at least a toy
