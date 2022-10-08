@@ -61,7 +61,7 @@ while not user_sw.raw():
         servos[servoNumber].value(servoValue)
         
         # give servo time to react
-        #time.sleep(0.2)
+        time.sleep(0.1)
         
         # indicate that you received a cmd
         led_bar.set_hsv(0, 0.0, 0.0, 0.0)
