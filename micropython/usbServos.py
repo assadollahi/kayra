@@ -47,21 +47,29 @@ led_bar.start()
 while not user_sw.raw():
     
     # read a command from the host
-    v = sys.stdin.readline().strip()
+    inCommand = sys.stdin.readline().strip()
     
     # if you received a command, show via led0
-    if len(v) > 0:
+    if len(inCommand) > 0:
         led_bar.set_hsv(0, 1.0, 1.0, 0.5)     
 
-        print(v)
-        servoNumber = int(v.split()[0])
-        servoValue = float(v.split()[1])
+        print(inCommand)
+        inCommandSplit = inCommand.split()
+        cmdString = inCommandSplit[0]
         
-        # set servo value
-        servos[servoNumber].value(servoValue)
+        if cmdString == "sss":
+            servoNumber = int(inCommandSplit[1])
+            servoValue = float(inCommandSplit[2])
         
-        # give servo time to react
-        time.sleep(0.1)
+            # set servo value
+            servos[servoNumber].value(servoValue)
+            
+            # give servo time to react
+            time.sleep(0.1)
+            
+        elif cmdString == "sas":
+            print("sas cmd")
+            
         
         # indicate that you received a cmd
         led_bar.set_hsv(0, 0.0, 0.0, 0.0)

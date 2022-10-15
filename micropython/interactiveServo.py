@@ -57,13 +57,13 @@ def on_press(key):
             servoValues[servoNumber] += servoStep
             print("servo " + str(servoNumber) + " set to " + str(servoValues[servoNumber]))
             servoDictionary[poseName] = copy.deepcopy(servoValues)
-            s.write((str(servoNumber)+ " " + str(servoValues[servoNumber]) + "\n").encode('ASCII'))
+            s.write(("sss " + str(servoNumber)+ " " + str(servoValues[servoNumber]) + "\n").encode('ASCII'))
 
         if key == keyboard.Key.left:
             servoValues[servoNumber] -= servoStep
             print("servo " + str(servoNumber) + " set to " + str(servoValues[servoNumber]))
             servoDictionary[poseName] = copy.deepcopy(servoValues) 
-            s.write((str(servoNumber)+ " " + str(servoValues[servoNumber]) + "\n").encode('ASCII'))
+            s.write(("sss " + str(servoNumber)+ " " + str(servoValues[servoNumber]) + "\n").encode('ASCII'))
 
         if key == keyboard.Key.up:
             servoNumber += 1
@@ -102,7 +102,7 @@ def on_press(key):
             servoValues = copy.deepcopy(servoDictionary[poseName])
             print("pose " + poseName + " selected: \t" + ", ".join([str(flt) for flt in servoValues]))
             for eachServo in range(0, len(servoValues)):
-                s.write((str(eachServo)+ " " + str(servoValues[eachServo]) + "\n").encode('ASCII'))
+                s.write(("sss " + str(eachServo)+ " " + str(servoValues[eachServo]) + "\n").encode('ASCII'))
                    
         if key == keyboard.Key.down:
             poseNumber -= 1
@@ -114,7 +114,7 @@ def on_press(key):
             servoValues = copy.deepcopy(servoDictionary[poseName])
             print("pose " + poseName + " selected: \t" + ", ".join([str(flt) for flt in servoValues]))   
             for eachServo in range(0, len(servoValues)):
-                s.write((str(eachServo)+ " " + str(servoValues[eachServo]) + "\n").encode('ASCII'))   
+                s.write(("sss " + str(eachServo)+ " " + str(servoValues[eachServo]) + "\n").encode('ASCII'))   
       
     # character entry
     if hasattr(key, 'char'):
@@ -129,7 +129,7 @@ def on_press(key):
                 # go into neutral pose after loading poses    
                 servoValues = copy.deepcopy(servoDictionary["neutral"])
                 for eachServo in range(0, len(servoValues)):
-                    s.write((str(eachServo)+ " " + str(servoValues[eachServo]) + "\n").encode('ASCII'))
+                    s.write(("sss " + str(eachServo)+ " " + str(servoValues[eachServo]) + "\n").encode('ASCII'))
 
             if key.char == 's':
                 print("saving values")
@@ -153,7 +153,7 @@ def on_press(key):
             if key.char == 'z':
                 print("set servo " + str(servoNumber) + " to zero")
                 servoValues[servoNumber] = 0
-                s.write((str(servoNumber)+ " " + str(servoValues[servoNumber]) + "\n").encode('ASCII'))     
+                s.write(("sss " + str(servoNumber)+ " " + str(servoValues[servoNumber]) + "\n").encode('ASCII'))     
                             
             if key.char == 'p':
                 print("entering pose mode\n\tcursor up and down to toggle poses")
