@@ -12,7 +12,7 @@ led_bar = WS2812(servo2040.NUM_LEDS, 1, 0, servo2040.LED_DATA)
 
 # Create a list of servos for pins 0 to 3. Up to 16 servos can be created
 START_PIN = servo2040.SERVO_1
-END_PIN = servo2040.SERVO_4
+END_PIN = servo2040.SERVO_9
 servos = [Servo(i) for i in range(START_PIN, END_PIN + 1)]
 
 # Enable all servos (this puts them at the middle)
