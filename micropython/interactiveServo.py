@@ -11,6 +11,7 @@ servoDictionary = {} # dictionary of posture names and their servoValues
 poseName = "neutral" # name of the current pose
 servoNumber = 0 # current servo to be controlled
 servoValues = [0.0] * 9 # servo values for the current posture
+servoStep = 10
 
 # start with the neutral pose
 servoDictionary["neutral"] = servoValues
@@ -22,7 +23,7 @@ textIntent = ""
 def on_press(key):
 
     global servoDictionary, poseName
-    global servoNumber, servoValues
+    global servoNumber, servoValues, servoStep
     global inputMode, textEntered, textIntent
     
     # meta commands
@@ -53,13 +54,13 @@ def on_press(key):
     if inputMode == "control":
             
         if key == keyboard.Key.right:
-            servoValues[servoNumber] += 10
+            servoValues[servoNumber] += servoStep
             print("servo " + str(servoNumber) + " set to " + str(servoValues[servoNumber]))
             servoDictionary[poseName] = copy.deepcopy(servoValues)
             s.write((str(servoNumber)+ " " + str(servoValues[servoNumber]) + "\n").encode('ASCII'))
 
         if key == keyboard.Key.left:
-            servoValues[servoNumber] -= 10
+            servoValues[servoNumber] -= servoStep
             print("servo " + str(servoNumber) + " set to " + str(servoValues[servoNumber]))
             servoDictionary[poseName] = copy.deepcopy(servoValues) 
             s.write((str(servoNumber)+ " " + str(servoValues[servoNumber]) + "\n").encode('ASCII'))
@@ -100,7 +101,9 @@ def on_press(key):
             poseName = poseList[poseNumber]
             servoValues = copy.deepcopy(servoDictionary[poseName])
             print("pose " + poseName + " selected: \t" + ", ".join([str(flt) for flt in servoValues]))
-               
+            for eachServo in range(0, len(servoValues)):
+                s.write((str(eachServo)+ " " + str(servoValues[eachServo]) + "\n").encode('ASCII'))
+                   
         if key == keyboard.Key.down:
             poseNumber -= 1
             
@@ -109,7 +112,9 @@ def on_press(key):
             
             poseName = poseList[poseNumber]
             servoValues = copy.deepcopy(servoDictionary[poseName])
-            print("pose " + poseName + " selected: \t" + ", ".join([str(flt) for flt in servoValues]))      
+            print("pose " + poseName + " selected: \t" + ", ".join([str(flt) for flt in servoValues]))   
+            for eachServo in range(0, len(servoValues)):
+                s.write((str(eachServo)+ " " + str(servoValues[eachServo]) + "\n").encode('ASCII'))   
       
     # character entry
     if hasattr(key, 'char'):
@@ -133,6 +138,17 @@ def on_press(key):
                 
         
         if inputMode == "control":
+            if key.char == '1':
+                servoStep = 1
+                print("servoStep set to " + str(servoStep))     
+            
+            if key.char == '5':
+                servoStep = 5
+                print("servoStep set to " + str(servoStep))         
+            
+            if key.char == '0':
+                servoStep = 10
+                print("servoStep set to " + str(servoStep))     
             
             if key.char == 'z':
                 print("set servo " + str(servoNumber) + " to zero")
