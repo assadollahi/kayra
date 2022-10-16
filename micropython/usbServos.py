@@ -20,22 +20,6 @@ for s in servos:
     s.enable()
 time.sleep(1)
 
-'''
-# Go to min
-for s in servos:
-    s.to_min()
-time.sleep(2)
-
-# Go to max
-for s in servos:
-    s.to_max()
-time.sleep(2)
-
-# Go back to mid
-for s in servos:
-    s.to_mid()
-time.sleep(2)
-'''
 
 # Create the user button
 user_sw = Button(servo2040.USER_SW)

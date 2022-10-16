@@ -20,6 +20,12 @@ inputMode = "control"
 textEntered = ""
 textIntent = ""
 
+def setAllServos(inServoValues):
+    stringValues = [str(x) for x in inServoValues] 
+    print(("sas " + " ".join(stringValues) + "\n").encode('ASCII'))
+    s.write(("sas " + " ".join(stringValues) + "\n").encode('ASCII'))   
+
+
 def on_press(key):
 
     global servoDictionary, poseName
@@ -101,8 +107,7 @@ def on_press(key):
             poseName = poseList[poseNumber]
             servoValues = copy.deepcopy(servoDictionary[poseName])
             print("pose " + poseName + " selected: \t" + ", ".join([str(flt) for flt in servoValues]))
-            for eachServo in range(0, len(servoValues)):
-                s.write(("sss " + str(eachServo)+ " " + str(servoValues[eachServo]) + "\n").encode('ASCII'))
+            setAllServos(servoValues)
                    
         if key == keyboard.Key.down:
             poseNumber -= 1
@@ -113,8 +118,7 @@ def on_press(key):
             poseName = poseList[poseNumber]
             servoValues = copy.deepcopy(servoDictionary[poseName])
             print("pose " + poseName + " selected: \t" + ", ".join([str(flt) for flt in servoValues]))   
-            for eachServo in range(0, len(servoValues)):
-                s.write(("sss " + str(eachServo)+ " " + str(servoValues[eachServo]) + "\n").encode('ASCII'))   
+            setAllServos(servoValues)  
       
     # character entry
     if hasattr(key, 'char'):
@@ -128,12 +132,8 @@ def on_press(key):
                 
                 # go into neutral pose after loading poses    
                 servoValues = copy.deepcopy(servoDictionary["neutral"])
-                #for eachServo in range(0, len(servoValues)):
-                #    s.write(("sss " + str(eachServo)+ " " + str(servoValues[eachServo]) + "\n").encode('ASCII'))
-                stringValues = [str(x) for x in servoValues] 
-                print(("sas " + " ".join(stringValues) + "\n").encode('ASCII'))
-                s.write(("sas " + " ".join(stringValues) + "\n").encode('ASCII'))
-
+                setAllServos(servoValues)
+                
             if key.char == 's':
                 print("saving values")
                 with open("servoValues.json", "w") as outfile:
