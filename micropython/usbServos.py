@@ -68,7 +68,11 @@ while not user_sw.raw():
             time.sleep(0.1)
             
         elif cmdString == "sas":
-            print("sas cmd")
+            #print("sas cmd")
+            for arrayNumber in range(1, len(inCommandSplit)):
+                #print("servoNumber: " + str(arrayNumber-1) + " " + inCommandSplit[arrayNumber])
+                # servos are addressed zero-based
+                servos[arrayNumber-1].value(float(inCommandSplit[arrayNumber]))
             
         
         # indicate that you received a cmd

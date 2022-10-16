@@ -128,8 +128,11 @@ def on_press(key):
                 
                 # go into neutral pose after loading poses    
                 servoValues = copy.deepcopy(servoDictionary["neutral"])
-                for eachServo in range(0, len(servoValues)):
-                    s.write(("sss " + str(eachServo)+ " " + str(servoValues[eachServo]) + "\n").encode('ASCII'))
+                #for eachServo in range(0, len(servoValues)):
+                #    s.write(("sss " + str(eachServo)+ " " + str(servoValues[eachServo]) + "\n").encode('ASCII'))
+                stringValues = [str(x) for x in servoValues] 
+                print(("sas " + " ".join(stringValues) + "\n").encode('ASCII'))
+                s.write(("sas " + " ".join(stringValues) + "\n").encode('ASCII'))
 
             if key.char == 's':
                 print("saving values")
