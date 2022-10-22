@@ -22,7 +22,9 @@ Folders:
 - gcode: printable files for Prusa i3 MK3, PETG
 - Pics: some of documentation pictures
 - STL: STL files for your 3D printer slicer 
+- micropython: all software for the servo-controller and PC side
 
 For full documentation & wiki please refer to [kayra.org](https://kayra.org)
+Just started a [discord sever](https://discord.gg/BEGypnqF74) for discussion and support.
 
 
