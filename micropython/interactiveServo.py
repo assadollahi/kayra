@@ -25,6 +25,11 @@ def setAllServos(inServoValues):
     print(("sas " + " ".join(stringValues) + "\n").encode('ASCII'))
     s.write(("sas " + " ".join(stringValues) + "\n").encode('ASCII'))   
 
+def storeNamedPose(inPoseName, inServoValues):
+    stringValues = [str(x) for x in inServoValues] 
+    print(("snp " + inPoseName + " " + " ".join(stringValues) + "\n").encode('ASCII'))
+    s.write(("snp " + inPoseName + " " + " ".join(stringValues) + "\n").encode('ASCII'))  
+
 
 def on_press(key):
 
@@ -168,9 +173,16 @@ def on_press(key):
             
         elif inputMode == "pose":
             if key.char == 'c':
+				# control mode in pose, i.e. change the servo values for the current pose
                 print("entering control mode for pose " + poseName + "\n\tcursor up and down to toggle servoNumber, left and right to change values")
                 inputMode = "control"
-                
+            
+            if key.char == 't': 
+				# transmit pose, i.e. send the current pose to controller to be stored there
+                servoValuesToBeSent = copy.deepcopy(servoDictionary[poseName])
+                print("store named pose " + poseName + " \t" + ", ".join([str(flt) for flt in servoValuesToBeSent]))
+                storeNamedPose(poseName, servoValuesToBeSent)				   
+            
             if key.char == '+':
                 print("adding a new pose\n\ttype its name followed by enter")
                 inputMode = "text"
@@ -183,7 +195,7 @@ def on_press(key):
     
 # open a serial connection
 # please make sure to select the correct ACM0,1,n
-s = serial.Serial("/dev/ttyACM1", 115200)
+s = serial.Serial("/dev/ttyACM0", 115200)
 
 # Collect events until released
 #    suppress=True,

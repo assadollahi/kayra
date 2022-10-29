@@ -29,6 +29,7 @@ USE_COSINE = True       # Whether or not to use a cosine path between values
 
 servoValues = [0.0] * 9 # servo values for the current posture
 nextServoValues = [0.0] * 9 # servo values for the next posture provided by SAS command
+servoDictionary = {} # dictionary of posture names and their servoValues
 
 # Create the user button
 user_sw = Button(servo2040.USER_SW)
@@ -51,6 +52,7 @@ while not user_sw.raw():
         cmdString = inCommandSplit[0]
         
         if cmdString == "sss":
+            # "Set Single Servo"
             servoNumber = int(inCommandSplit[1])
             servoValue = float(inCommandSplit[2])
         
@@ -61,6 +63,7 @@ while not user_sw.raw():
             time.sleep(0.1)
             
         elif cmdString == "sas":
+            # "Set All Servos"
             # parse the servo values into a new array
             for arrayNumber in range(1, len(inCommandSplit)):
                 #print("servoNumber: " + str(arrayNumber-1) + " " + inCommandSplit[arrayNumber])
@@ -87,7 +90,20 @@ while not user_sw.raw():
             # now copy the new values to the old state    
             for eachServoNumber in range(0,9):
                 servoValues[eachServoNumber] = nextServoValues[eachServoNumber]
+        
+        elif cmdString == "snp":
+            # "Store Named Pose
+            poseName = inCommandSplit[1]
+            print("pose name: " + poseName)
             
+            # reserve space for new pose
+            servoDictionary.update({poseName : [0.0] * 9})
+            
+            # parse the servo values into a new pose array
+            for arrayNumber in range(2, len(inCommandSplit)):
+                #print("servoNumber: " + str(arrayNumber-2) + " " + inCommandSplit[arrayNumber])                
+                servoDictionary[poseName][arrayNumber-2] = float(inCommandSplit[arrayNumber])
+        
         # indicate that you received a cmd
         led_bar.set_hsv(0, 0.0, 0.0, 0.0)
     
