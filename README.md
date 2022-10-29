@@ -1,7 +1,7 @@
 # kayra
 An easy to modify, 3D printable open-source humanoid robot evolved by the community:
 
-[![Alt text](https://img.youtube.com/vi/OypnQU-1pCs/0.jpg)](https://www.youtube.com/watch?v=OypnQU-1pCs)
+[![Alt text](https://img.youtube.com/vi/WwYL2lFPdM4/0.jpg)](https://youtube.com/shorts/WwYL2lFPdM4)
 
 - can walk nearly as fast as a human toddler
 - can use the arms to lift at least a toy
@@ -22,7 +22,9 @@ Folders:
 - gcode: printable files for Prusa i3 MK3, PETG
 - Pics: some of documentation pictures
 - STL: STL files for your 3D printer slicer 
+- micropython: all software for the servo-controller and PC side
 
 For full documentation & wiki please refer to [kayra.org](https://kayra.org)
+Just started a [discord sever](https://discord.gg/BEGypnqF74) for discussion and support.
 
 
