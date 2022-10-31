@@ -1,206 +1,371 @@
 # this is intended to be run from a PC
-# please pip3 install pynput 
 
-from pynput import keyboard
+import curses
+import curses.ascii
 import copy
 import serial
 import time
 import json
 
-servoDictionary = {} # dictionary of posture names and their servoValues
-poseName = "neutral" # name of the current pose
+# servos
 servoNumber = 0 # current servo to be controlled
-servoValues = [0.0] * 9 # servo values for the current posture
-servoStep = 10
+servoValues = [0.0] * 9 # storing all servo values
+servoStep = 10 # moving servo by this angle on key press
 
-# start with the neutral pose
-servoDictionary["neutral"] = servoValues
+# poses
+poseName = "neutral" # name of the current pose
+poseDictionary = {} # dictionary of posture names and their servoValues
+poseDictionary[poseName] = servoValues
 
-inputMode = "control"
-textEntered = ""
-textIntent = ""
+# animation
+animationName = "first"
+animationStep = 0
+animationPlaying = False
+animationDictionary = {}
+animationDictionary.update({animationName : [poseName]}) # first animation consists of the neutral pose only
+
+# control states
+inputMode = "servo" # what state should receive the keyboard input
+textEntered = "" # when entering a text, store it here across key strokes
+textIntent = "" # use the entered text for this intent 
+
 
 def setAllServos(inServoValues):
     stringValues = [str(x) for x in inServoValues] 
-    print(("sas " + " ".join(stringValues) + "\n").encode('ASCII'))
+    #print(("sas " + " ".join(stringValues) + "\n").encode('ASCII'))
     s.write(("sas " + " ".join(stringValues) + "\n").encode('ASCII'))   
 
 def storeNamedPose(inPoseName, inServoValues):
     stringValues = [str(x) for x in inServoValues] 
-    print(("snp " + inPoseName + " " + " ".join(stringValues) + "\n").encode('ASCII'))
+    #print(("snp " + inPoseName + " " + " ".join(stringValues) + "\n").encode('ASCII'))
     s.write(("snp " + inPoseName + " " + " ".join(stringValues) + "\n").encode('ASCII'))  
 
 
-def on_press(key):
+def controlUI(stdscr):
 
-    global servoDictionary, poseName
     global servoNumber, servoValues, servoStep
+    global poseDictionary, poseName
+    global animationNumber, animationName, animationDictionary, animationStep
     global inputMode, textEntered, textIntent
+
+    cursorX = 0
+    cursorY = 0
     
-    # meta commands
-    if key == keyboard.Key.esc:
-        # Stop listener
-        return False    
-
-    if key == keyboard.Key.insert:
-        print("text input mode")
-        textEntered = ""
-        inputMode = "text"
-        
-    if key == keyboard.Key.enter:
-        #print("text entered: " + textEntered)
-                
-        if textIntent == "pose":
-            poseName = textEntered
-            # default servoValues of the new pose are the current servo values
-            servoDictionary[poseName] = copy.deepcopy(servoValues)
-            print("servo pose " + poseName + " added & selected")
-            inputMode = "pose"
-            
-        else:
-            print("unknown text intent: " + textIntent)
-            inputMode = "control"
-
-    # non-character entry
-    if inputMode == "control":
-            
-        if key == keyboard.Key.right:
-            servoValues[servoNumber] += servoStep
-            print("servo " + str(servoNumber) + " set to " + str(servoValues[servoNumber]))
-            servoDictionary[poseName] = copy.deepcopy(servoValues)
-            s.write(("sss " + str(servoNumber)+ " " + str(servoValues[servoNumber]) + "\n").encode('ASCII'))
-
-        if key == keyboard.Key.left:
-            servoValues[servoNumber] -= servoStep
-            print("servo " + str(servoNumber) + " set to " + str(servoValues[servoNumber]))
-            servoDictionary[poseName] = copy.deepcopy(servoValues) 
-            s.write(("sss " + str(servoNumber)+ " " + str(servoValues[servoNumber]) + "\n").encode('ASCII'))
-
-        if key == keyboard.Key.up:
-            servoNumber += 1
-            
-            if (servoNumber > 8):
-                servoNumber = 8
-                
-            print("servo " + str(servoNumber) + " selected: " + str(servoValues[servoNumber]))
-               
-        if key == keyboard.Key.down:
-            servoNumber -= 1
-            
-            if (servoNumber < 0):
-                servoNumber = 0
-            
-            print("servo " + str(servoNumber) + " selected: " + str(servoValues[servoNumber]))
+    curses.curs_set(0) 
+    stdscr.nodelay(1)
     
-    elif inputMode == "pose":
+    while True:
         
-        poseNumber = 0
-        noOfPoses = len(servoDictionary.keys()) 
-        poseList = list(servoDictionary)
+        keypress = stdscr.getch()
         
-        try:
-            poseNumber = poseList.index(poseName)
-        except:
-            poseNumber = 0
+        if keypress != curses.ERR:
+            
+            stdscr.clear()
+
+            # non-character entry
+            if inputMode == "servo":
+                    
+                if keypress == curses.KEY_RIGHT:
+                    servoValues[servoNumber] += servoStep
+                    stdscr.addstr(3, 4, "servo " + str(servoNumber) + " set to " + str(servoValues[servoNumber]))
+                    poseDictionary[poseName] = copy.deepcopy(servoValues)
+                    s.write(("sss " + str(servoNumber)+ " " + str(servoValues[servoNumber]) + "\n").encode('ASCII'))
+
+                if keypress == curses.KEY_LEFT:
+                    servoValues[servoNumber] -= servoStep
+                    stdscr.addstr(3, 4, "servo " + str(servoNumber) + " set to " + str(servoValues[servoNumber]))
+                    poseDictionary[poseName] = copy.deepcopy(servoValues) 
+                    s.write(("sss " + str(servoNumber)+ " " + str(servoValues[servoNumber]) + "\n").encode('ASCII'))
+
+                if keypress == curses.KEY_DOWN:
+                    servoNumber += 1
+                    
+                    if (servoNumber > 8):
+                        servoNumber = 8
+                        
+                    stdscr.addstr(3, 4, "servo " + str(servoNumber) + " selected: " + str(servoValues[servoNumber]))
+                       
+                if keypress == curses.KEY_UP:
+                    servoNumber -= 1
+                    
+                    if (servoNumber < 0):
+                        servoNumber = 0
+                    
+                    stdscr.addstr(3, 4, "servo " + str(servoNumber) + " selected: " + str(servoValues[servoNumber]))
+            
+            elif inputMode == "pose":
                 
-        if key == keyboard.Key.up:
-            poseNumber += 1
-            
-            if (poseNumber > (noOfPoses-1)):
-                poseNumber = noOfPoses-1
-            
-            poseName = poseList[poseNumber]
-            servoValues = copy.deepcopy(servoDictionary[poseName])
-            print("pose " + poseName + " selected: \t" + ", ".join([str(flt) for flt in servoValues]))
-            setAllServos(servoValues)
-                   
-        if key == keyboard.Key.down:
-            poseNumber -= 1
-            
-            if (poseNumber < 0):
                 poseNumber = 0
+                noOfPoses = len(poseDictionary.keys()) 
+                poseList = list(poseDictionary)
+                
+                try:
+                    poseNumber = poseList.index(poseName)
+                except:
+                    poseNumber = 0
+                        
+                if keypress == curses.KEY_DOWN:
+                    poseNumber += 1
+                    
+                    if (poseNumber > (noOfPoses-1)):
+                        poseNumber = noOfPoses-1
+                    
+                    poseName = poseList[poseNumber]
+                    servoValues = copy.deepcopy(poseDictionary[poseName])
+                    stdscr.addstr(3, 4, "pose " + poseName + " selected: \t" + ", ".join([str(flt) for flt in servoValues]))
+                    setAllServos(servoValues)
+                           
+                if keypress == curses.KEY_UP:
+                    poseNumber -= 1
+                    
+                    if (poseNumber < 0):
+                        poseNumber = 0
+                    
+                    poseName = poseList[poseNumber]
+                    servoValues = copy.deepcopy(poseDictionary[poseName])
+                    stdscr.addstr(3, 4, "pose " + poseName + " selected: \t" + ", ".join([str(flt) for flt in servoValues]))   
+                    setAllServos(servoValues)  
             
-            poseName = poseList[poseNumber]
-            servoValues = copy.deepcopy(servoDictionary[poseName])
-            print("pose " + poseName + " selected: \t" + ", ".join([str(flt) for flt in servoValues]))   
-            setAllServos(servoValues)  
-      
-    # character entry
-    if hasattr(key, 'char'):
+            elif inputMode == "animation":
+                animationNumber = 0
+                noOfAnimations = len(animationDictionary.keys()) 
+                animationList = list(animationDictionary)
+                
+                try:
+                    animationNumber = animationList.index(animationName)
+                except:
+                    animationNumber = 0
+                    
+                if keypress == curses.KEY_RIGHT:
+                    # show next animation step, i.e. next pose in list
+                    animationStep += 1
+                    
+                    currentPoseList = animationDictionary[animationName]
+                    
+                    if animationStep > (len(currentPoseList)-1):
+                        animationStep = len(currentPoseList)-1
+                    
+                if keypress == curses.KEY_LEFT:
+                    # show previous animation step, i.e. previous pose in list
+                    animationStep -= 1
+                    
+                    currentPoseList = animationDictionary[animationName]
+                    
+                    if animationStep < 0:
+                        animationStep = 0
+                    
+                if keypress == curses.KEY_DOWN:
+                    # change to a next, different animation
+                    animationNumber += 1
+                    
+                    if animationNumber > (len(animationList)-1):
+                        animationNumber = len(animationList)-1    
+                    
+                    animationName = animationList[animationNumber]
 
-        # in any other mode than text input, you can load and save 
-        if not(inputMode == "text"):
-            if key.char == 'l':
-                print("loading values")
-                with open("servoValues.json", 'r') as f:
-                    servoDictionary = json.load(f)
+                    # start this anmiation from beginning
+                    animationStep = 0  
+                       
+                if keypress == curses.KEY_UP:
+                    # change to the previous animation
+                    animationNumber -= 1
+                    
+                    if animationNumber < 0:
+                        animationNumber = 0               
+                        
+                    animationName = animationList[animationNumber]
+                    
+                    # start this anmiation from beginning
+                    animationStep = 0   
+
+            # in any other mode than text input, you can load and save 
+            if not(inputMode == "text"):
                 
-                # go into neutral pose after loading poses    
-                servoValues = copy.deepcopy(servoDictionary["neutral"])
-                setAllServos(servoValues)
+                if keypress == ord('q'):
+                    # leave app
+                    return False    
                 
-            if key.char == 's':
-                print("saving values")
-                with open("servoValues.json", "w") as outfile:
-                    json.dump(servoDictionary, outfile)
+                if keypress == ord('l'):
+                    stdscr.addstr(4, 4, "loading values")
+                    with open("servoValues.json", 'r') as f:
+                        poseDictionary = json.load(f)
+                    
+                    # go into neutral pose after loading poses    
+                    servoValues = copy.deepcopy(poseDictionary["neutral"])
+                    setAllServos(servoValues)
+                    
+                if keypress == ord('s'):
+                    stdscr.addstr(4, 4, "saving values")
+                    with open("servoValues.json", "w") as outfile:
+                        json.dump(poseDictionary, outfile)
+                        
+            if inputMode == "servo":
+                # control mode in pose, i.e. change the servo values for the current pose
+                #stdscr.addstr(2, 4, "control mode for pose " + poseName)
                 
-        
-        if inputMode == "control":
-            if key.char == '1':
-                servoStep = 1
-                print("servoStep set to " + str(servoStep))     
+                if keypress == ord('1'):
+                    servoStep = 1
+                    stdscr.addstr(4, 4, "servoStep set to " + str(servoStep))     
+                
+                if keypress == ord('5'):
+                    servoStep = 5
+                    stdscr.addstr(4, 4, "servoStep set to " + str(servoStep))         
+                
+                if keypress == ord('0'):
+                    servoStep = 10
+                    stdscr.addstr(4, 4, "servoStep set to " + str(servoStep))     
+                
+                if keypress == ord('z'):
+                    stdscr.addstr(4, 4, "set servo " + str(servoNumber) + " to zero")
+                    servoValues[servoNumber] = 0
+                    s.write(("sss " + str(servoNumber)+ " " + str(servoValues[servoNumber]) + "\n").encode('ASCII'))     
+                                
+                if keypress == ord('p'):
+                    inputMode = "pose"
+                                
+                if keypress == ord('a'):
+                    inputMode = "animation"
             
-            if key.char == '5':
-                servoStep = 5
-                print("servoStep set to " + str(servoStep))         
-            
-            if key.char == '0':
-                servoStep = 10
-                print("servoStep set to " + str(servoStep))     
-            
-            if key.char == 'z':
-                print("set servo " + str(servoNumber) + " to zero")
-                servoValues[servoNumber] = 0
-                s.write(("sss " + str(servoNumber)+ " " + str(servoValues[servoNumber]) + "\n").encode('ASCII'))     
+            elif inputMode == "text":
+                # mode for entering text
+                #stdscr.addstr(2, 4, "text input mode")
+                
+                if curses.ascii.isalnum(keypress):
+                    textEntered += chr(keypress)
+                    stdscr.addstr(5, 4, textEntered)
+                else:
+                    
+                    if keypress == 10:
+                        stdscr.addstr(4, 4, "text entered: " + textEntered)
+                                
+                        if textIntent == "pose":
+                            poseName = textEntered
+                            # default servoValues of the new pose are the current servo values
+                            poseDictionary[poseName] = copy.deepcopy(servoValues)
+                            stdscr.addstr(4, 4, "servo pose " + poseName + " added & selected")
+                            inputMode = "pose"
                             
-            if key.char == 'p':
-                print("entering pose mode\n\tcursor up and down to toggle poses")
-                inputMode = "pose"
+                        elif textIntent == "animation":
+                            animationName = textEntered
+                            animationDictionary.update({animationName : []})
+                            stdscr.addstr(4, 4, "animation " + animationName + " added & selected")
+                            inputMode = "animation"
+                                
+                        else:
+                            stdscr.addstr(4, 4, "unknown text intent: " + textIntent)
+                            inputMode = "servo"
+                    else:
+                        stdscr.addstr(5, 4, "not an ascii char and not return")
+                
+            elif inputMode == "pose":
+                # mode for navigating & editing poses
+                #stdscr.addstr(2, 4, "pose mode")
+                
+                if keypress == ord('c'):
+                    inputMode = "servo"
+                                
+                if keypress == ord('a'):
+                    inputMode = "animation"
+                
+                if keypress == ord('t'):
+                    # transmit pose, i.e. send the current pose to controller to be stored there
+                    servoValuesToBeSent = copy.deepcopy(poseDictionary[poseName])
+                    stdscr.addstr(4, 4, "store named pose " + poseName + " \t" + ", ".join([str(flt) for flt in servoValuesToBeSent]))
+                    storeNamedPose(poseName, servoValuesToBeSent)                  
+                
+                if keypress == ord('+'):
+                    # add a new pose
+                    stdscr.addstr(4, 4, "adding a new pose\n\ttype its name followed by enter")
+                    inputMode = "text"
+                    textEntered = ""
+                    textIntent = "pose"
+
+            elif inputMode == "animation":
+                # animation mode: toggle between animations and step through their poses
+                #stdscr.addstr(2, 4, "animation mode")
+                
+                if keypress == ord('c'):
+                    inputMode = "servo"
+                    animationPlaying = False
+                    
+                if keypress == ord('p'):
+                    inputMode = "pose"
+                    animationPlaying = False
+
+                if keypress == ord('g'):
+                    stdscr.addstr(4, 4, "playing back animation " +  animationName)
+                    animationPlaying = True
+                    
+                if keypress == ord('x'):
+                    stdscr.addstr(4, 4, "stopping play back of animation " +  animationName)
+                    animationPlaying = False
+                                
+                if keypress == ord('+'):
+                    # add a new animation
+                    stdscr.addstr(4, 4, "adding a new animation\n\ttype its name followed by enter")
+                    inputMode = "text"
+                    textEntered = ""
+                    textIntent = "animation"
+                    animationPlaying = False            
+                
+            else:
+                stdscr.addstr(4, 4, "unknown inputMode")
+                inputMode = "servo"    
         
+        if inputMode == "servo":
+            # control mode in pose, i.e. change the servo values for the current pose
+            stdscr.addstr(2, 4, "control mode for pose " + poseName)
+            # print out overview
+            stdscr.addstr(4, 4, "list of all poses:")
+
+            lineCounter = 5
+            for eachSingleServo in servoValues:
+                servoNumberToDisplay = lineCounter - 5
+                if servoNumberToDisplay == servoNumber:
+                    stdscr.addstr(lineCounter, 4, str(servoNumberToDisplay) + ": " + str(eachSingleServo), curses.A_REVERSE)
+                else:
+                    stdscr.addstr(lineCounter, 4, str(servoNumberToDisplay) + ": " + str(eachSingleServo))
+                lineCounter += 1
+            
         elif inputMode == "text":
-            print(key.char)
-            textEntered += key.char
+            # mode for entering text
+            stdscr.addstr(2, 4, "text input mode")
             
         elif inputMode == "pose":
-            if key.char == 'c':
-				# control mode in pose, i.e. change the servo values for the current pose
-                print("entering control mode for pose " + poseName + "\n\tcursor up and down to toggle servoNumber, left and right to change values")
-                inputMode = "control"
+            # mode for navigating & editing poses
+            stdscr.addstr(2, 4, "pose mode")
             
-            if key.char == 't': 
-				# transmit pose, i.e. send the current pose to controller to be stored there
-                servoValuesToBeSent = copy.deepcopy(servoDictionary[poseName])
-                print("store named pose " + poseName + " \t" + ", ".join([str(flt) for flt in servoValuesToBeSent]))
-                storeNamedPose(poseName, servoValuesToBeSent)				   
+            # print out overview
+            stdscr.addstr(4, 4, "servo values:")
+            poseList = list(poseDictionary)
+            lineCounter = 5
+            for eachSinglePose in poseList:
+                strValues = [str(singleValue) for singleValue in poseDictionary[eachSinglePose]] 
+                if eachSinglePose == poseName:
+                    stdscr.addstr(lineCounter, 4, eachSinglePose + ":\t" + "\t".join(strValues), curses.A_REVERSE)
+                else:
+                    stdscr.addstr(lineCounter, 4, eachSinglePose + ":\t" + "\t".join(strValues))
+                lineCounter += 1
+     
+        elif inputMode == "animation":
+            # animation mode: toggle between animations and step through their poses
+            stdscr.addstr(2, 4, "animation mode") 
+            stdscr.addstr(4, 4, "animations and their poses:")
             
-            if key.char == '+':
-                print("adding a new pose\n\ttype its name followed by enter")
-                inputMode = "text"
-                textEntered = ""
-                textIntent = "pose"
-            
-        else:
-            print("unknown inputMode")
-            inputMode = "control"    
-    
+            animationList = list(animationDictionary)
+            lineCounter = 5
+            for eachSingleAnim in animationList:
+                if eachSingleAnim == animationName:
+                    stdscr.addstr(lineCounter, 4, eachSingleAnim + ":\t" + "\t".join(animationDictionary[eachSingleAnim]), curses.A_REVERSE)
+                else:
+                    stdscr.addstr(lineCounter, 4, eachSingleAnim + ":\t" + "\t".join(animationDictionary[eachSingleAnim]))
+                lineCounter += 1  
+                            
+        time.sleep(0.05)
+
 # open a serial connection
 # please make sure to select the correct ACM0,1,n
 s = serial.Serial("/dev/ttyACM0", 115200)
 
-# Collect events until released
-#    suppress=True,
-with keyboard.Listener(
-
-    on_press=on_press) as listener:
-    listener.join()
+curses.wrapper(controlUI)
 
