@@ -14,6 +14,8 @@ servoStep = 10 # moving servo by this angle on key press
 
 # poses
 poseName = "neutral" # name of the current pose
+poseHighlighted = "" # for editing animations
+poseNumber = 0
 poseDictionary = {} # dictionary of posture names and their servoValues
 poseDictionary[poseName] = servoValues
 
@@ -44,7 +46,7 @@ def storeNamedPose(inPoseName, inServoValues):
 def controlUI(stdscr):
 
     global servoNumber, servoValues, servoStep
-    global poseDictionary, poseName
+    global poseDictionary, poseName, poseHighlighted, poseNumber
     global animationNumber, animationName, animationDictionary, animationStep
     global inputMode, textEntered, textIntent
 
@@ -177,6 +179,32 @@ def controlUI(stdscr):
                     
                     # start this anmiation from beginning
                     animationStep = 0   
+                    
+            elif inputMode == "animation_edit":
+                # selecting poses to compose animation
+                noOfPoses = len(poseDictionary.keys()) 
+                poseList = list(poseDictionary)
+                
+                if keypress == curses.KEY_DOWN:
+                    # change to a next, different animation
+                    poseNumber += 1
+                    
+                    if poseNumber > (len(poseList)-1):
+                        poseNumber = len(poseList)-1    
+                    
+                    poseHighlighted = poseList[poseNumber]
+      
+                if keypress == curses.KEY_UP:
+                    # change to the previous animation
+                    poseNumber -= 1
+                    
+                    if poseNumber < 0:
+                        poseNumber = 0               
+                        
+                    poseHighlighted = poseList[poseNumber]
+                    
+                if keypress == 10:
+                    animationDictionary[animationName].append(poseHighlighted)
 
             # in any other mode than text input, you can load and save 
             if not(inputMode == "text"):
@@ -232,12 +260,11 @@ def controlUI(stdscr):
                 
                 if curses.ascii.isalnum(keypress):
                     textEntered += chr(keypress)
-                    stdscr.addstr(5, 4, textEntered)
+                    stdscr.addstr(4, 4, textEntered)
                 else:
                     
                     if keypress == 10:
-                        stdscr.addstr(4, 4, "text entered: " + textEntered)
-                                
+                
                         if textIntent == "pose":
                             poseName = textEntered
                             # default servoValues of the new pose are the current servo values
@@ -275,14 +302,13 @@ def controlUI(stdscr):
                 
                 if keypress == ord('+'):
                     # add a new pose
-                    stdscr.addstr(4, 4, "adding a new pose\n\ttype its name followed by enter")
+                    stdscr.addstr(3, 4, "enter name for new pose")
                     inputMode = "text"
                     textEntered = ""
                     textIntent = "pose"
 
             elif inputMode == "animation":
                 # animation mode: toggle between animations and step through their poses
-                #stdscr.addstr(2, 4, "animation mode")
                 
                 if keypress == ord('c'):
                     inputMode = "servo"
@@ -290,6 +316,10 @@ def controlUI(stdscr):
                     
                 if keypress == ord('p'):
                     inputMode = "pose"
+                    animationPlaying = False
+                    
+                if keypress == ord('e'):
+                    inputMode = "animation_edit"
                     animationPlaying = False
 
                 if keypress == ord('g'):
@@ -302,12 +332,24 @@ def controlUI(stdscr):
                                 
                 if keypress == ord('+'):
                     # add a new animation
-                    stdscr.addstr(4, 4, "adding a new animation\n\ttype its name followed by enter")
+                    stdscr.addstr(3, 4, "enter name for new animation:")
                     inputMode = "text"
                     textEntered = ""
                     textIntent = "animation"
-                    animationPlaying = False            
+                    animationPlaying = False  
+                      
+            elif inputMode == "animation_edit":
+                # editing animations: adding and removing poses for a single animation
+                                
+                if keypress == ord('c'):
+                    inputMode = "servo"
+                    
+                if keypress == ord('p'):
+                    inputMode = "pose"
                 
+                if keypress == ord('a'):
+                    inputMode = "animation"
+                    
             else:
                 stdscr.addstr(4, 4, "unknown inputMode")
                 inputMode = "servo"    
@@ -360,7 +402,23 @@ def controlUI(stdscr):
                 else:
                     stdscr.addstr(lineCounter, 4, eachSingleAnim + ":\t" + "\t".join(animationDictionary[eachSingleAnim]))
                 lineCounter += 1  
-                            
+        
+        elif inputMode == "animation_edit":
+            stdscr.addstr(2, 4, "animation edit mode") 
+            
+            stdscr.addstr(3, 4, animationName + ":\t" + "\t".join(animationDictionary[animationName]))
+            
+            stdscr.addstr(4, 4, "available poses:")
+            poseList = list(poseDictionary)
+            lineCounter = 5
+            for eachSinglePose in poseList:
+                strValues = [str(singleValue) for singleValue in poseDictionary[eachSinglePose]] 
+                if eachSinglePose == poseHighlighted:
+                    stdscr.addstr(lineCounter, 4, eachSinglePose + ":\t" + "\t".join(strValues), curses.A_REVERSE)
+                else:
+                    stdscr.addstr(lineCounter, 4, eachSinglePose + ":\t" + "\t".join(strValues))
+                lineCounter += 1 
+                                   
         time.sleep(0.05)
 
 # open a serial connection
