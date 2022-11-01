@@ -29,7 +29,9 @@ USE_COSINE = True       # Whether or not to use a cosine path between values
 
 servoValues = [0.0] * 9 # servo values for the current posture
 nextServoValues = [0.0] * 9 # servo values for the next posture provided by SAS command
-servoDictionary = {} # dictionary of posture names and their servoValues
+poseDictionary = {} # dictionary of posture names and their servoValues
+
+animationDictionary = {} # dictionary of animation names and their list of poses
 
 # Create the user button
 user_sw = Button(servo2040.USER_SW)
@@ -97,12 +99,32 @@ while not user_sw.raw():
             print("pose name: " + poseName)
             
             # reserve space for new pose
-            servoDictionary.update({poseName : [0.0] * 9})
+            poseDictionary.update({poseName : [0.0] * 9})
             
             # parse the servo values into a new pose array
             for arrayNumber in range(2, len(inCommandSplit)):
                 #print("servoNumber: " + str(arrayNumber-2) + " " + inCommandSplit[arrayNumber])                
-                servoDictionary[poseName][arrayNumber-2] = float(inCommandSplit[arrayNumber])
+                poseDictionary[poseName][arrayNumber-2] = float(inCommandSplit[arrayNumber])
+        
+        elif cmdString == "ssa":
+            # "Store Single Animation"
+            animName = inCommandSplit[1]
+            listOfPoses = inCommandSplit[2:]
+            print("animation: " + animName + ", number of poses: " + str(len(listOfPoses)))
+            animationDictionary.update({animName : listOfPoses})
+        
+        elif cmdString == "psa":
+            animName = inCommandSplit[1] 
+            
+            for eachPose in animationDictionary[animName]:
+                
+                for eachServoNumber in range(0,9):
+                    #print("servoNumber: " + str(arrayNumber-1) + " " + inCommandSplit[arrayNumber])
+                    # servos are addressed zero-based
+                    servos[eachServoNumber].value(poseDictionary[eachPose][eachServoNumber])
+            
+                # wait 200ms for servos to settle between each pose
+                time.sleep(0.2)
         
         # indicate that you received a cmd
         led_bar.set_hsv(0, 0.0, 0.0, 0.0)

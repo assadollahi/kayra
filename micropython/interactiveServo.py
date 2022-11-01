@@ -42,6 +42,19 @@ def storeNamedPose(inPoseName, inServoValues):
     #print(("snp " + inPoseName + " " + " ".join(stringValues) + "\n").encode('ASCII'))
     s.write(("snp " + inPoseName + " " + " ".join(stringValues) + "\n").encode('ASCII'))  
 
+def storeSingleAnimation(inAnimName, inListOfPoses, inPoseDictionary):
+    # store single anmiation, i.e. name and list of poses
+    
+    # send animation's poses first
+    for eachPose in inListOfPoses:
+        storeNamedPose(eachPose, inPoseDictionary[eachPose])
+        
+    # next, send the animation name together with the sequence of poses    
+    s.write(("ssa " + inAnimName + " " + " ".join(inListOfPoses) + "\n").encode('ASCII'))  
+
+def playSingleAnimation(inAnimName):
+    # play single animation
+    s.write(("psa " + inAnimName + "\n").encode('ASCII'))  
 
 def controlUI(stdscr):
 
@@ -215,8 +228,11 @@ def controlUI(stdscr):
                 
                 if keypress == ord('l'):
                     stdscr.addstr(4, 4, "loading values")
-                    with open("servoValues.json", 'r') as f:
-                        poseDictionary = json.load(f)
+                    with open("servoControl.json", 'r') as f:
+                        inDictionary = json.load(f)
+                    
+                    animationDictionary = copy.deepcopy(inDictionary["animations"])
+                    poseDictionary = copy.deepcopy(inDictionary["poses"])
                     
                     # go into neutral pose after loading poses    
                     servoValues = copy.deepcopy(poseDictionary["neutral"])
@@ -224,8 +240,13 @@ def controlUI(stdscr):
                     
                 if keypress == ord('s'):
                     stdscr.addstr(4, 4, "saving values")
-                    with open("servoValues.json", "w") as outfile:
-                        json.dump(poseDictionary, outfile)
+                    
+                    outDictionary = {}
+                    outDictionary.update({"animations" : animationDictionary})
+                    outDictionary.update({"poses" : poseDictionary})
+                    
+                    with open("servoControl.json", "w") as outfile:
+                        json.dump(outDictionary, outfile)
                         
             if inputMode == "servo":
                 # control mode in pose, i.e. change the servo values for the current pose
@@ -312,23 +333,30 @@ def controlUI(stdscr):
                 
                 if keypress == ord('c'):
                     inputMode = "servo"
-                    animationPlaying = False
+                    #animationPlaying = False
                     
                 if keypress == ord('p'):
                     inputMode = "pose"
-                    animationPlaying = False
+                    #animationPlaying = False
                     
                 if keypress == ord('e'):
                     inputMode = "animation_edit"
-                    animationPlaying = False
+                    #animationPlaying = False
+                    
+                if keypress == ord('t'):
+                    # transmit animation, i.e. send the current animation to controller to be stored there
+                    animationToBeSent = copy.deepcopy(animationDictionary[animationName])
+                    stdscr.addstr(4, 4, "store named animation " + animationName + " \t" + ", ".join(animationToBeSent))
+                    storeSingleAnimation(animationName, animationToBeSent, poseDictionary)  
 
                 if keypress == ord('g'):
                     stdscr.addstr(4, 4, "playing back animation " +  animationName)
-                    animationPlaying = True
+                    playSingleAnimation(animationName)
+                    #animationPlaying = True
                     
                 if keypress == ord('x'):
                     stdscr.addstr(4, 4, "stopping play back of animation " +  animationName)
-                    animationPlaying = False
+                    #animationPlaying = False
                                 
                 if keypress == ord('+'):
                     # add a new animation
@@ -336,7 +364,7 @@ def controlUI(stdscr):
                     inputMode = "text"
                     textEntered = ""
                     textIntent = "animation"
-                    animationPlaying = False  
+                    #animationPlaying = False  
                       
             elif inputMode == "animation_edit":
                 # editing animations: adding and removing poses for a single animation
