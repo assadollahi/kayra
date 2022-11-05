@@ -6,9 +6,11 @@ from plasma import WS2812
 from servo import Servo, servo2040
 
 """
-Demonstrates how to create multiple Servo objects and control them together via serial commands from PC.
-It uses code from pimoroni servo 2040 examples to move servos smoothly
+- create multiple Servo objects
+- control them together via serial commands from PC.
+- uses code from pimoroni servo 2040 examples to move servos smoothly
 """
+
 # Create the LED bar, using PIO 1 and State Machine 0
 led_bar = WS2812(servo2040.NUM_LEDS, 1, 0, servo2040.LED_DATA)
 
@@ -39,6 +41,34 @@ user_sw = Button(servo2040.USER_SW)
 # Start updating the LED bar
 led_bar.start()
 
+
+def setSingleServo(inServos, inServoNumber, inServoValue):
+    # set servo value
+    inServos[inServoNumber].value(inServoValue)
+                        
+    # give servo time to react
+    time.sleep(0.1)
+
+def setAllServos(inServos, inServoValues, inNextServoValues):
+    
+    for update in range(0, UPDATES_PER_MOVE):
+        # Calculate how far along this movement to be
+        percent_along = update / UPDATES_PER_MOVE
+
+        if USE_COSINE:
+            # Move the servo between values using cosine
+            for eachServoNumber in range(0,9):
+                inServos[eachServoNumber].to_percent(math.cos(percent_along * math.pi), 1.0, -1.0, inServoValues[eachServoNumber], inNextServoValues[eachServoNumber])
+        else:
+            # Move the servo linearly between values
+            for eachServoNumber in range(0,9):
+                inServos[eachServoNumber].to_percent(percent_along, 0.0, 1.0, inServoValues[eachServoNumber], inNextServoValues[eachServoNumber])                
+        
+        time.sleep(1.0 / UPDATES)
+        
+
+
+
 # receive command "servoNumber servoValue"
 while not user_sw.raw():
     
@@ -57,13 +87,9 @@ while not user_sw.raw():
             # "Set Single Servo"
             servoNumber = int(inCommandSplit[1])
             servoValue = float(inCommandSplit[2])
-        
-            # set servo value
-            servos[servoNumber].value(servoValue)
             
-            # give servo time to react
-            time.sleep(0.1)
-            
+            setSingleServo(servos, servoNumber, servoValue)
+           
         elif cmdString == "sas":
             # "Set All Servos"
             # parse the servo values into a new array
@@ -74,20 +100,8 @@ while not user_sw.raw():
                 
                 nextServoValues[arrayNumber-1] = float(inCommandSplit[arrayNumber])
                 
-            for update in range(0, UPDATES_PER_MOVE):
-                # Calculate how far along this movement to be
-                percent_along = update / UPDATES_PER_MOVE
-
-                if USE_COSINE:
-                    # Move the servo between values using cosine
-                    for eachServoNumber in range(0,9):
-                        servos[eachServoNumber].to_percent(math.cos(percent_along * math.pi), 1.0, -1.0, servoValues[eachServoNumber], nextServoValues[eachServoNumber])
-                else:
-                    # Move the servo linearly between values
-                    for eachServoNumber in range(0,9):
-                        servos[eachServoNumber].to_percent(percent_along, 0.0, 1.0, servoValues[eachServoNumber], nextServoValues[eachServoNumber])                
-                
-                time.sleep(1.0 / UPDATES)
+            # now interpolate between the servos    
+            setAllServos(servos, servoValues, nextServoValues)
                 
             # now copy the new values to the old state    
             for eachServoNumber in range(0,9):
