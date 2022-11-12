@@ -385,7 +385,7 @@ def controlUI(stdscr):
             # control mode in pose, i.e. change the servo values for the current pose
             stdscr.addstr(2, 4, "control mode for pose " + poseName)
             # print out overview
-            stdscr.addstr(4, 4, "list of all poses:")
+            stdscr.addstr(4, 4, "servos nubmers and their values:")
 
             lineCounter = 5
             for eachSingleServo in servoValues:
@@ -419,7 +419,7 @@ def controlUI(stdscr):
         elif inputMode == "animation":
             # animation mode: toggle between animations and step through their poses
             stdscr.addstr(2, 4, "animation mode") 
-            stdscr.addstr(4, 4, "animations and their poses:")
+            stdscr.addstr(4, 4, "animation names and their poses:")
             
             animationList = list(animationDictionary)
             lineCounter = 5
@@ -450,7 +450,7 @@ def controlUI(stdscr):
 
 # open a serial connection
 # please make sure to select the correct ACM0,1,n
-s = serial.Serial("/dev/ttyACM0", 115200)
+s = serial.Serial("/dev/ttyACM2", 115200)
 
 curses.wrapper(controlUI)
 

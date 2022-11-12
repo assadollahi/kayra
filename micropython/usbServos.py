@@ -25,7 +25,7 @@ for s in servos:
 time.sleep(1)
 
 UPDATES = 50            # How many times to update Servos per second
-TIME_FOR_EACH_MOVE = 0.5  # The time to travel between each values
+TIME_FOR_EACH_MOVE = 0.25  # The time to travel between each values 32 is nice
 UPDATES_PER_MOVE = TIME_FOR_EACH_MOVE * UPDATES
 USE_COSINE = True       # Whether or not to use a cosine path between values
 
@@ -126,6 +126,7 @@ while not user_sw.raw():
             listOfPoses = inCommandSplit[2:]
             print("animation: " + animName + ", number of poses: " + str(len(listOfPoses)))
             animationDictionary.update({animName : listOfPoses})
+            print("poses in animation: " + str(len(animationDictionary[animName])))
         
         elif cmdString == "psa":
             # "Play Single Animation
