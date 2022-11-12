@@ -27,7 +27,7 @@ animationDictionary = {}
 animationDictionary.update({animationName : [poseName]}) # first animation consists of the neutral pose only
 
 # control states
-inputMode = "servo" # what state should receive the keyboard input
+inputMode = "pose" # what state should receive the keyboard input
 textEntered = "" # when entering a text, store it here across key strokes
 textIntent = "" # use the entered text for this intent 
 
