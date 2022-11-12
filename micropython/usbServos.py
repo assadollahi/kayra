@@ -25,7 +25,7 @@ for s in servos:
 time.sleep(1)
 
 UPDATES = 50            # How many times to update Servos per second
-TIME_FOR_EACH_MOVE = 0.25  # The time to travel between each values
+TIME_FOR_EACH_MOVE = 0.5  # The time to travel between each values
 UPDATES_PER_MOVE = TIME_FOR_EACH_MOVE * UPDATES
 USE_COSINE = True       # Whether or not to use a cosine path between values
 
@@ -128,10 +128,23 @@ while not user_sw.raw():
             animationDictionary.update({animName : listOfPoses})
         
         elif cmdString == "psa":
+            # "Play Single Animation
             animName = inCommandSplit[1] 
             
             for eachPose in animationDictionary[animName]:
                 
+                # get next animation step
+                for eachServoNumber in range(0,9):
+                    nextServoValues[eachServoNumber] = poseDictionary[eachPose][eachServoNumber]
+                
+                # now interpolate between the servos    
+                setAllServos(servos, servoValues, nextServoValues)
+                
+                # now copy the new values to the old state    
+                for eachServoNumber in range(0,9):
+                    servoValues[eachServoNumber] = nextServoValues[eachServoNumber]
+                
+                '''
                 for eachServoNumber in range(0,9):
                     #print("servoNumber: " + str(arrayNumber-1) + " " + inCommandSplit[arrayNumber])
                     # servos are addressed zero-based
@@ -139,6 +152,7 @@ while not user_sw.raw():
             
                 # wait 200ms for servos to settle between each pose
                 time.sleep(0.2)
+                '''
         
         # indicate that you received a cmd
         led_bar.set_hsv(0, 0.0, 0.0, 0.0)
