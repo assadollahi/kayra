@@ -124,11 +124,10 @@ def controlUI(stdscr):
                     
                     if (poseNumber > (noOfPoses-1)):
                         poseNumber = noOfPoses-1
-                    
+                        
+                    # needs to be set so that the UI can highlight that line
                     poseName = poseList[poseNumber]
-                    servoValues = copy.deepcopy(poseDictionary[poseName])
-                    stdscr.addstr(3, 4, "pose " + poseName + " selected: \t" + ", ".join([str(flt) for flt in servoValues]))
-                    setAllServos(servoValues)
+
                            
                 if keypress == curses.KEY_UP:
                     poseNumber -= 1
@@ -137,9 +136,13 @@ def controlUI(stdscr):
                         poseNumber = 0
                     
                     poseName = poseList[poseNumber]
+
+                    
+                if keypress == 10:
+                    # transfer the pose poseName to the servo controller when hitting CR
                     servoValues = copy.deepcopy(poseDictionary[poseName])
                     stdscr.addstr(3, 4, "pose " + poseName + " selected: \t" + ", ".join([str(flt) for flt in servoValues]))   
-                    setAllServos(servoValues)  
+                    setAllServos(servoValues) 
             
             elif inputMode == "animation":
                 animationNumber = 0
@@ -227,7 +230,7 @@ def controlUI(stdscr):
                     return False    
                 
                 if keypress == ord('l'):
-                    stdscr.addstr(4, 4, "loading values")
+                    stdscr.addstr(3, 4, "loading values")
                     with open("servoControl.json", 'r') as f:
                         inDictionary = json.load(f)
                     
@@ -239,7 +242,7 @@ def controlUI(stdscr):
                     setAllServos(servoValues)
                     
                 if keypress == ord('s'):
-                    stdscr.addstr(4, 4, "saving values")
+                    stdscr.addstr(3, 4, "saving values")
                     
                     outDictionary = {}
                     outDictionary.update({"animations" : animationDictionary})
@@ -254,18 +257,18 @@ def controlUI(stdscr):
                 
                 if keypress == ord('1'):
                     servoStep = 1
-                    stdscr.addstr(4, 4, "servoStep set to " + str(servoStep))     
+                    stdscr.addstr(3, 4, "servoStep set to " + str(servoStep))     
                 
                 if keypress == ord('5'):
                     servoStep = 5
-                    stdscr.addstr(4, 4, "servoStep set to " + str(servoStep))         
+                    stdscr.addstr(3, 4, "servoStep set to " + str(servoStep))         
                 
                 if keypress == ord('0'):
                     servoStep = 10
-                    stdscr.addstr(4, 4, "servoStep set to " + str(servoStep))     
+                    stdscr.addstr(3, 4, "servoStep set to " + str(servoStep))     
                 
                 if keypress == ord('z'):
-                    stdscr.addstr(4, 4, "set servo " + str(servoNumber) + " to zero")
+                    stdscr.addstr(3, 4, "set servo " + str(servoNumber) + " to zero")
                     servoValues[servoNumber] = 0
                     s.write(("sss " + str(servoNumber)+ " " + str(servoValues[servoNumber]) + "\n").encode('ASCII'))     
                                 
@@ -290,20 +293,20 @@ def controlUI(stdscr):
                             poseName = textEntered
                             # default servoValues of the new pose are the current servo values
                             poseDictionary[poseName] = copy.deepcopy(servoValues)
-                            stdscr.addstr(4, 4, "servo pose " + poseName + " added & selected")
+                            stdscr.addstr(3, 4, "servo pose " + poseName + " added & selected")
                             inputMode = "pose"
                             
                         elif textIntent == "animation":
                             animationName = textEntered
                             animationDictionary.update({animationName : []})
-                            stdscr.addstr(4, 4, "animation " + animationName + " added & selected")
+                            stdscr.addstr(3, 4, "animation " + animationName + " added & selected")
                             inputMode = "animation"
                                 
                         else:
-                            stdscr.addstr(4, 4, "unknown text intent: " + textIntent)
+                            stdscr.addstr(3, 4, "unknown text intent: " + textIntent)
                             inputMode = "servo"
                     else:
-                        stdscr.addstr(5, 4, "not an ascii char and not return")
+                        stdscr.addstr(4, 4, "not an ascii char and not return")
                 
             elif inputMode == "pose":
                 # mode for navigating & editing poses
@@ -318,7 +321,7 @@ def controlUI(stdscr):
                 if keypress == ord('t'):
                     # transmit pose, i.e. send the current pose to controller to be stored there
                     servoValuesToBeSent = copy.deepcopy(poseDictionary[poseName])
-                    stdscr.addstr(4, 4, "store named pose " + poseName + " \t" + ", ".join([str(flt) for flt in servoValuesToBeSent]))
+                    stdscr.addstr(3, 4, "store named pose " + poseName + " \t" + ", ".join([str(flt) for flt in servoValuesToBeSent]))
                     storeNamedPose(poseName, servoValuesToBeSent)                  
                 
                 if keypress == ord('+'):
@@ -333,30 +336,26 @@ def controlUI(stdscr):
                 
                 if keypress == ord('c'):
                     inputMode = "servo"
-                    #animationPlaying = False
                     
                 if keypress == ord('p'):
                     inputMode = "pose"
-                    #animationPlaying = False
                     
                 if keypress == ord('e'):
                     inputMode = "animation_edit"
-                    #animationPlaying = False
                     
                 if keypress == ord('t'):
                     # transmit animation, i.e. send the current animation to controller to be stored there
                     animationToBeSent = copy.deepcopy(animationDictionary[animationName])
-                    stdscr.addstr(4, 4, "store named animation " + animationName + " \t" + ", ".join(animationToBeSent))
+                    stdscr.addstr(3, 4, "store named animation " + animationName + " \t" + ", ".join(animationToBeSent))
                     storeSingleAnimation(animationName, animationToBeSent, poseDictionary)  
 
-                if keypress == ord('g'):
-                    stdscr.addstr(4, 4, "playing back animation " +  animationName)
+                if keypress == 10:
+                    # playback animation when hitting CR (animation has to be transferred via key "t" before)
+                    stdscr.addstr(3, 4, "playing back animation " +  animationName)
                     playSingleAnimation(animationName)
-                    #animationPlaying = True
                     
                 if keypress == ord('x'):
-                    stdscr.addstr(4, 4, "stopping play back of animation " +  animationName)
-                    #animationPlaying = False
+                    stdscr.addstr(3, 4, "stopping play back of animation " +  animationName)
                                 
                 if keypress == ord('+'):
                     # add a new animation
@@ -364,7 +363,7 @@ def controlUI(stdscr):
                     inputMode = "text"
                     textEntered = ""
                     textIntent = "animation"
-                    #animationPlaying = False  
+                    
                       
             elif inputMode == "animation_edit":
                 # editing animations: adding and removing poses for a single animation
@@ -379,7 +378,7 @@ def controlUI(stdscr):
                     inputMode = "animation"
                     
             else:
-                stdscr.addstr(4, 4, "unknown inputMode")
+                stdscr.addstr(3, 4, "unknown inputMode")
                 inputMode = "servo"    
         
         if inputMode == "servo":
