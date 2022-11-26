@@ -450,7 +450,7 @@ def controlUI(stdscr):
 
 # open a serial connection
 # please make sure to select the correct ACM0,1,n
-s = serial.Serial("/dev/ttyACM2", 115200)
+s = serial.Serial("/dev/ttyACM0", 115200)
 
 curses.wrapper(controlUI)
 
