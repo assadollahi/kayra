@@ -350,7 +350,9 @@ def controlUI(stdscr):
                     storeSingleAnimation(animationName, animationToBeSent, poseDictionary)  
 
                 if keypress == 10:
-                    # playback animation when hitting CR (animation has to be transferred via key "t" before)
+                    # transmit and playback animation when hitting CR 
+                    animationToBeSent = copy.deepcopy(animationDictionary[animationName])
+                    storeSingleAnimation(animationName, animationToBeSent, poseDictionary)  
                     stdscr.addstr(3, 4, "playing back animation " +  animationName)
                     playSingleAnimation(animationName)
                     
