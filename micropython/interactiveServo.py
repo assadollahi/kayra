@@ -78,7 +78,7 @@ def controlUI(stdscr):
             stdscr.clear()
 
             # non-character entry
-            if inputMode == "servo":
+            if inputMode == "pose_edit":
                     
                 if keypress == curses.KEY_RIGHT:
                     servoValues[servoNumber] += servoStep
@@ -249,9 +249,9 @@ def controlUI(stdscr):
                     outDictionary.update({"poses" : poseDictionary})
                     
                     with open("servoControl.json", "w") as outfile:
-                        json.dump(outDictionary, outfile)
+                        json.dump(outDictionary, outfile, indent=4)
                         
-            if inputMode == "servo":
+            if inputMode == "pose_edit":
                 # control mode in pose, i.e. change the servo values for the current pose
                 #stdscr.addstr(2, 4, "control mode for pose " + poseName)
                 
@@ -304,7 +304,7 @@ def controlUI(stdscr):
                                 
                         else:
                             stdscr.addstr(3, 4, "unknown text intent: " + textIntent)
-                            inputMode = "servo"
+                            inputMode = "pose_edit"
                     else:
                         stdscr.addstr(4, 4, "not an ascii char and not return")
                 
@@ -312,8 +312,8 @@ def controlUI(stdscr):
                 # mode for navigating & editing poses
                 #stdscr.addstr(2, 4, "pose mode")
                 
-                if keypress == ord('c'):
-                    inputMode = "servo"
+                if keypress == ord('e'):
+                    inputMode = "pose_edit"
                                 
                 if keypress == ord('a'):
                     inputMode = "animation"
@@ -334,9 +334,7 @@ def controlUI(stdscr):
             elif inputMode == "animation":
                 # animation mode: toggle between animations and step through their poses
                 
-                if keypress == ord('c'):
-                    inputMode = "servo"
-                    
+
                 if keypress == ord('p'):
                     inputMode = "pose"
                     
@@ -369,9 +367,6 @@ def controlUI(stdscr):
                       
             elif inputMode == "animation_edit":
                 # editing animations: adding and removing poses for a single animation
-                                
-                if keypress == ord('c'):
-                    inputMode = "servo"
                     
                 if keypress == ord('p'):
                     inputMode = "pose"
@@ -381,11 +376,11 @@ def controlUI(stdscr):
                     
             else:
                 stdscr.addstr(3, 4, "unknown inputMode")
-                inputMode = "servo"    
+                inputMode = "pose_edit"    
         
-        if inputMode == "servo":
+        if inputMode == "pose_edit":
             # control mode in pose, i.e. change the servo values for the current pose
-            stdscr.addstr(2, 4, "control mode for pose " + poseName)
+            stdscr.addstr(2, 4, "edit mode for pose " + poseName)
             # print out overview
             stdscr.addstr(4, 4, "servos nubmers and their values:")
 
