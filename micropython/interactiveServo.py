@@ -326,6 +326,29 @@ def controlUI(stdscr):
                             poseDictionary[poseName] = copy.deepcopy(servoValues)
                             stdscr.addstr(3, 4, "pose " + poseName + " added & selected")
                             inputMode = "pose"
+                        
+                        elif textIntent == "animation_del":
+                            if textEntered == "y":
+                                del animationDictionary[animationName]
+                                stdscr.addstr(3, 4, "animation " + animationName + " removed")
+                                animationName = "first"
+                            
+                            inputMode = "animation"
+                
+                        elif textIntent == "animation_rename":
+                            if textEntered in animationDictionary.keys():
+                                # don't try to overwrite an existing key
+                                stdscr.addstr(3, 4, "renaming " + animationName + " not possible, new animation name " + textEntered + " already exists.")
+                                inputMode = "animation"
+                            else:
+                                # make a copy of the pose with the new name, delete the pose with the old name
+                                oldAnimationName = animationName
+                                animationName = textEntered
+                                animationDictionary[animationName] = copy.deepcopy(animationDictionary[oldAnimationName])                                
+                                del animationDictionary[oldAnimationName]
+                                
+                                stdscr.addstr(3, 4, "animation " + oldAnimationName + " renamed into " + animationName)
+                                inputMode = "animation"
                             
                         elif textIntent == "animation":
                             animationName = textEntered
@@ -387,6 +410,20 @@ def controlUI(stdscr):
                 if keypress == ord('e'):
                     inputMode = "animation_edit"
                     
+                if keypress == ord('d'):
+                    # remove animation, but ask before deleting
+                    stdscr.addstr(3, 4, "delete animation: " + animationName + " (y)?")
+                    inputMode = "text"
+                    textEntered = ""
+                    textIntent = "animation_del"                    
+                
+                if keypress == ord('r'):
+                    # rename animation
+                    stdscr.addstr(3, 4, "rename animation: " + animationName + ":")
+                    inputMode = "text"
+                    textEntered = ""
+                    textIntent = "animation_rename"  
+                    
                 if keypress == ord('t'):
                     # transmit animation, i.e. send the current animation to controller to be stored there
                     animationToBeSent = copy.deepcopy(animationDictionary[animationName])
@@ -423,6 +460,8 @@ def controlUI(stdscr):
             else:
                 stdscr.addstr(3, 4, "unknown inputMode")
                 inputMode = "pose_edit"    
+        
+        # display ui in current mode
         
         if inputMode == "pose_edit":
             # control mode in pose, i.e. change the servo values for the current pose
