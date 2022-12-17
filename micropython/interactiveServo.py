@@ -280,20 +280,51 @@ def controlUI(stdscr):
             
             elif inputMode == "text":
                 # mode for entering text
-                #stdscr.addstr(2, 4, "text input mode")
+                stdscr.addstr(1, 4, str(keypress))
                 
                 if curses.ascii.isalnum(keypress):
                     textEntered += chr(keypress)
                     stdscr.addstr(4, 4, textEntered)
+
                 else:
                     
-                    if keypress == 10:
+                    if keypress == curses.KEY_BACKSPACE: 
+                        #remove last char 
+                        textEntered = textEntered[:-1]
+                        stdscr.addstr(4, 4, textEntered)
+                        
+                    elif keypress == 10:
+                        # depending on the intent for which text input 
+                        # mode was switched on, use the enteredText
+                        
+                        if textIntent == "pose_del":
+                            if textEntered == "y":
+                                del poseDictionary[poseName]
+                                stdscr.addstr(3, 4, "pose " + poseName + " removed")
+                                poseName = "neutral"
+                            
+                            inputMode = "pose"
                 
-                        if textIntent == "pose":
+                        elif textIntent == "pose_rename":
+                            if textEntered in poseDictionary.keys():
+                                # don't try to overwrite an existing key
+                                stdscr.addstr(3, 4, "renaming " + poseName + " not possible, new pose name " + textEntered + " already exists.")
+                                inputMode = "pose"
+                            else:
+                                # make a copy of the pose with the new name, delete the pose with the old name
+                                oldPoseName = poseName
+                                poseName = textEntered
+                                poseDictionary[poseName] = copy.deepcopy(poseDictionary[oldPoseName])                                
+                                del poseDictionary[oldPoseName]
+                                
+                                stdscr.addstr(3, 4, "pose " + oldPoseName + " renamed into " + poseName)
+                                inputMode = "pose"
+                            
+                        elif textIntent == "pose":
                             poseName = textEntered
                             # default servoValues of the new pose are the current servo values
                             poseDictionary[poseName] = copy.deepcopy(servoValues)
-                            stdscr.addstr(3, 4, "servo pose " + poseName + " added & selected")
+                            stdscr.addstr(3, 4, "pose " + poseName + " added & selected")
                             inputMode = "pose"
                             
                         elif textIntent == "animation":
@@ -305,18 +336,33 @@ def controlUI(stdscr):
                         else:
                             stdscr.addstr(3, 4, "unknown text intent: " + textIntent)
                             inputMode = "pose_edit"
+                            
                     else:
                         stdscr.addstr(4, 4, "not an ascii char and not return")
                 
             elif inputMode == "pose":
                 # mode for navigating & editing poses
-                #stdscr.addstr(2, 4, "pose mode")
+                stdscr.addstr(2, 4, "pose mode")
                 
                 if keypress == ord('e'):
                     inputMode = "pose_edit"
                                 
                 if keypress == ord('a'):
                     inputMode = "animation"
+                    
+                if keypress == ord('d'):
+                    # remove pose, but ask before deleting
+                    stdscr.addstr(3, 4, "delete pose: " + poseName + " (y)?")
+                    inputMode = "text"
+                    textEntered = ""
+                    textIntent = "pose_del"                    
+                
+                if keypress == ord('r'):
+                    # rename pose
+                    stdscr.addstr(3, 4, "rename pose: " + poseName + ":")
+                    inputMode = "text"
+                    textEntered = ""
+                    textIntent = "pose_rename"                    
                 
                 if keypress == ord('t'):
                     # transmit pose, i.e. send the current pose to controller to be stored there
