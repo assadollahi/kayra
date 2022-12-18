@@ -87,6 +87,19 @@
             "bodyFronRbroad",
             "bodyFrontRsideLup",
             "bodyFrontL"
+        ],
+        "walk4": [
+            "stand",
+            "closestand",
+            "Rside",
+            "bodyFronRbroad",
+            "LSide",
+            "bodyFrontL",
+            "Rside",
+            "bodyFronRbroad",
+            "LSide",
+            "bodyFrontL",
+            "stand"
         ]
     },
     "poses": {
@@ -341,6 +354,17 @@
             35.0,
             -8.0,
             -3.0,
+            0.0
+        ],
+        "LSide": [
+            17.0,
+            21.0,
+            57.0,
+            -14.0,
+            -30.0,
+            10.0,
+            -15.0,
+            -6.0,
             0.0
         ]
     }
