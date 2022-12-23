@@ -56,6 +56,10 @@ def playSingleAnimation(inAnimName):
     # play single animation
     s.write(("psa " + inAnimName + "\n").encode('ASCII'))  
 
+def setUntetheredAnimation(inAnimName):
+    # set animation to be played when untethered and user button is pressed
+    s.write(("sua " + inAnimName + "\n").encode('ASCII'))
+
 def controlUI(stdscr):
 
     global servoNumber, servoValues, servoStep
@@ -254,6 +258,13 @@ def controlUI(stdscr):
                     with open("servoControl.json", "w") as outfile:
                         json.dump(outDictionary, outfile, indent=4)
                         
+                if keypress == ord('u'):
+                    # prepare controller for disconnect from PC and 
+                    # change its operationMode to 'untethered' to play the stored animation
+                    # to store an animation, press 'p' when in animation mode 
+                    stdscr.addstr(3, 4, "setting controller to 'untethered', PC connection won't work after reboot, long press user button to change back to 'tethered'. ") 
+                    s.write(("som untethered\n").encode('ASCII'))               
+                        
             if inputMode == "pose_edit":
                 # control mode in pose, i.e. change the servo values for the current pose
                 #stdscr.addstr(2, 4, "control mode for pose " + poseName)
@@ -392,10 +403,12 @@ def controlUI(stdscr):
                     textIntent = "pose_rename"                    
                 
                 if keypress == ord('t'):
-                    # transmit pose, i.e. send the current pose to controller to be stored there
+                    # store untethered pose
+                    # 
                     servoValuesToBeSent = copy.deepcopy(poseDictionary[poseName])
-                    stdscr.addstr(3, 4, "store named pose " + poseName + " \t" + ", ".join([str(flt) for flt in servoValuesToBeSent]))
-                    storeNamedPose(poseName, servoValuesToBeSent)                  
+                    storeNamedPose(poseName, servoValuesToBeSent) 
+                    stdscr.addstr(3, 4, "transmit pose " + poseName + " for untethered operation mode \t" + ", ".join([str(flt) for flt in servoValuesToBeSent]))
+                    s.write(("tup " + poseName + "\n").encode('ASCII'))                 
                 
                 if keypress == ord('+'):
                     # add a new pose
@@ -429,10 +442,11 @@ def controlUI(stdscr):
                     textIntent = "animation_rename"  
                     
                 if keypress == ord('t'):
-                    # transmit animation, i.e. send the current animation to controller to be stored there
+                    # transmit animation to be played
                     animationToBeSent = copy.deepcopy(animationDictionary[animationName])
-                    stdscr.addstr(3, 4, "store named animation " + animationName + " \t" + ", ".join(animationToBeSent))
-                    storeSingleAnimation(animationName, animationToBeSent, poseDictionary)  
+                    storeSingleAnimation(animationName, animationToBeSent, poseDictionary) 
+                    stdscr.addstr(3, 4, "transmit animation " + animationName + " for untethered operation mode: \t" + ", ".join(animationToBeSent))
+                    s.write(("tua " + animationName + "\n").encode('ASCII'))  
 
                 if keypress == 10:
                     # transmit and playback animation when hitting CR 
@@ -536,7 +550,7 @@ def controlUI(stdscr):
 
 # open a serial connection
 # please make sure to select the correct ACM0,1,n
-s = serial.Serial("/dev/ttyACM2", 115200)
+s = serial.Serial("/dev/ttyACM1", 115200)
 
 curses.wrapper(controlUI)
 
