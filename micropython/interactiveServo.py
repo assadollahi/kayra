@@ -4,8 +4,13 @@ import curses
 import curses.ascii
 import copy
 import serial
+import serial.tools.list_ports
 import time
 import json
+
+# connections
+currentPort = 0 # first serial port 
+serialPort = -1
 
 # servos
 servoNumber = 0 # current servo to be controlled
@@ -27,20 +32,29 @@ animationDictionary = {}
 animationDictionary.update({animationName : [poseName]}) # first animation consists of the neutral pose only
 
 # control states
-inputMode = "pose" # what state should receive the keyboard input
+inputMode = "connect" # what state should receive the keyboard input
 textEntered = "" # when entering a text, store it here across key strokes
 textIntent = "" # use the entered text for this intent 
 
+def sendCommand(inCommand):
+    # this should be the only place where commands are sent 
+    # so this would be the place to connect to other controllers
+    global serialPort
+
+    '''
+    if serialPort == -1:
+        inputMode = "connect"
+    else:
+    '''    
+    serialPort.write((inCommand + "\n").encode('ASCII'))
 
 def setAllServos(inServoValues):
     stringValues = [str(x) for x in inServoValues] 
-    #print(("sas " + " ".join(stringValues) + "\n").encode('ASCII'))
-    s.write(("sas " + " ".join(stringValues) + "\n").encode('ASCII'))   
+    sendCommand("sas " + " ".join(stringValues) + "\n")   
 
 def storeNamedPose(inPoseName, inServoValues):
     stringValues = [str(x) for x in inServoValues] 
-    #print(("snp " + inPoseName + " " + " ".join(stringValues) + "\n").encode('ASCII'))
-    s.write(("snp " + inPoseName + " " + " ".join(stringValues) + "\n").encode('ASCII'))  
+    sendCommand("snp " + inPoseName + " " + " ".join(stringValues) + "\n")
 
 def storeSingleAnimation(inAnimName, inListOfPoses, inPoseDictionary):
     # store single anmiation, i.e. name and list of poses
@@ -50,18 +64,19 @@ def storeSingleAnimation(inAnimName, inListOfPoses, inPoseDictionary):
         storeNamedPose(eachPose, inPoseDictionary[eachPose])
         
     # next, send the animation name together with the sequence of poses    
-    s.write(("ssa " + inAnimName + " " + " ".join(inListOfPoses) + "\n").encode('ASCII'))  
+    sendCommand("ssa " + inAnimName + " " + " ".join(inListOfPoses) + "\n") 
 
 def playSingleAnimation(inAnimName):
     # play single animation
-    s.write(("psa " + inAnimName + "\n").encode('ASCII'))  
+    sendCommand("psa " + inAnimName + "\n") 
 
 def setUntetheredAnimation(inAnimName):
     # set animation to be played when untethered and user button is pressed
-    s.write(("sua " + inAnimName + "\n").encode('ASCII'))
+    sendCommand("sua " + inAnimName + "\n")
 
 def controlUI(stdscr):
 
+    global currentPort, serialPort
     global servoNumber, servoValues, servoStep
     global poseDictionary, poseName, poseHighlighted, poseNumber
     global animationNumber, animationName, animationDictionary, animationStep
@@ -85,19 +100,40 @@ def controlUI(stdscr):
             stdscr.clear()
 
             # non-character entry
-            if inputMode == "pose_edit":
+            if inputMode == "connect":
+                # connect controller via serial port 
+                noOfPorts = len(serial.tools.list_ports.comports())
+                
+                # up / down for flipping through connections, enter for selecting a connection
+                if keypress == curses.KEY_DOWN:
+                    currentPort += 1
+                    
+                    if currentPort > (noOfPorts-1):
+                        currentPort = noOfPorts-1
+                    
+                    stdscr.addstr(3, 4, "port " + str(currentPort) + " selected")
+                    
+                if keypress == curses.KEY_UP:
+                    currentPort -= 1
+                    
+                    if currentPort < 0:
+                        currentPort = 0
+                    
+                    stdscr.addstr(3, 4, "port " + str(currentPort) + " selected")
+                
+            elif inputMode == "pose_edit":
                     
                 if keypress == curses.KEY_RIGHT:
                     servoValues[servoNumber] += servoStep
                     stdscr.addstr(3, 4, "servo " + str(servoNumber) + " set to " + str(servoValues[servoNumber]))
                     poseDictionary[poseName] = copy.deepcopy(servoValues)
-                    s.write(("sss " + str(servoNumber)+ " " + str(servoValues[servoNumber]) + "\n").encode('ASCII'))
+                    sendCommand("sss " + str(servoNumber)+ " " + str(servoValues[servoNumber])) 
 
                 if keypress == curses.KEY_LEFT:
                     servoValues[servoNumber] -= servoStep
                     stdscr.addstr(3, 4, "servo " + str(servoNumber) + " set to " + str(servoValues[servoNumber]))
                     poseDictionary[poseName] = copy.deepcopy(servoValues) 
-                    s.write(("sss " + str(servoNumber)+ " " + str(servoValues[servoNumber]) + "\n").encode('ASCII'))
+                    sendCommand("sss " + str(servoNumber)+ " " + str(servoValues[servoNumber]))
 
                 if keypress == curses.KEY_DOWN:
                     servoNumber += 1
@@ -263,9 +299,23 @@ def controlUI(stdscr):
                     # change its operationMode to 'untethered' to play the stored animation
                     # to store an animation, press 'p' when in animation mode 
                     stdscr.addstr(3, 4, "setting controller to 'untethered', PC connection won't work after reboot, long press user button to change back to 'tethered'. ") 
-                    s.write(("som untethered\n").encode('ASCII'))               
+                    sendCommand("som untethered\n")             
                         
-            if inputMode == "pose_edit":
+            if inputMode == "connect":
+                if keypress == 10:
+                    ports = serial.tools.list_ports.comports()
+                    stdscr.addstr(3, 4, "connecting to " + ports[currentPort].description) 
+                    # open selected serial connection, e.g. "/dev/ttyACM1"
+                    serialPort = serial.Serial(ports[currentPort].device, 115200)
+                    inputMode = "connect"
+                    
+                if keypress == ord('p'):
+                    inputMode = "pose"
+                                
+                if keypress == ord('a'):
+                    inputMode = "animation"                    
+            
+            elif inputMode == "pose_edit":
                 # control mode in pose, i.e. change the servo values for the current pose
                 #stdscr.addstr(2, 4, "control mode for pose " + poseName)
                 
@@ -284,7 +334,7 @@ def controlUI(stdscr):
                 if keypress == ord('z'):
                     stdscr.addstr(3, 4, "set servo " + str(servoNumber) + " to zero")
                     servoValues[servoNumber] = 0
-                    s.write(("sss " + str(servoNumber)+ " " + str(servoValues[servoNumber]) + "\n").encode('ASCII'))     
+                    sendCommand("sss " + str(servoNumber)+ " " + str(servoValues[servoNumber]) + "\n")     
                                 
                 if keypress == ord('p'):
                     inputMode = "pose"
@@ -408,7 +458,7 @@ def controlUI(stdscr):
                     servoValuesToBeSent = copy.deepcopy(poseDictionary[poseName])
                     storeNamedPose(poseName, servoValuesToBeSent) 
                     stdscr.addstr(3, 4, "transmit pose " + poseName + " for untethered operation mode \t" + ", ".join([str(flt) for flt in servoValuesToBeSent]))
-                    s.write(("tup " + poseName + "\n").encode('ASCII'))                 
+                    sendCommand("tup " + poseName + "\n")               
                 
                 if keypress == ord('+'):
                     # add a new pose
@@ -446,7 +496,7 @@ def controlUI(stdscr):
                     animationToBeSent = copy.deepcopy(animationDictionary[animationName])
                     storeSingleAnimation(animationName, animationToBeSent, poseDictionary) 
                     stdscr.addstr(3, 4, "transmit animation " + animationName + " for untethered operation mode: \t" + ", ".join(animationToBeSent))
-                    s.write(("tua " + animationName + "\n").encode('ASCII'))  
+                    sendCommand("tua " + animationName + "\n")  
 
                 if keypress == 10:
                     # transmit and playback animation when hitting CR 
@@ -464,8 +514,7 @@ def controlUI(stdscr):
                     inputMode = "text"
                     textEntered = ""
                     textIntent = "animation"
-                    
-                      
+                                          
             elif inputMode == "animation_edit":
                 # editing animations: adding and removing poses for a single animation
                     
@@ -481,7 +530,20 @@ def controlUI(stdscr):
         
         # display ui in current mode
         
-        if inputMode == "pose_edit":
+        if inputMode == "connect":
+            
+            ports = serial.tools.list_ports.comports()
+            lineCounter = 5
+            for p in ports:
+                portToDisplay = lineCounter - 5
+                if portToDisplay == currentPort:
+                    stdscr.addstr(lineCounter, 4, str(portToDisplay) + ": " + p.device + " " + p.description, curses.A_REVERSE)
+                else:
+                    stdscr.addstr(lineCounter, 4, str(portToDisplay) + ": " + p.device + " " + p.description)
+                lineCounter += 1    
+            stdscr.addstr(2, 4, str(len(ports)) + " ports found")
+            
+        elif inputMode == "pose_edit":
             # control mode in pose, i.e. change the servo values for the current pose
             stdscr.addstr(2, 4, "edit mode for pose " + poseName)
             # print out overview
@@ -548,9 +610,6 @@ def controlUI(stdscr):
                                    
         time.sleep(0.05)
 
-# open a serial connection
-# please make sure to select the correct ACM0,1,n
-s = serial.Serial("/dev/ttyACM1", 115200)
 
 curses.wrapper(controlUI)
 
