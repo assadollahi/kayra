@@ -27,8 +27,8 @@ time.sleep(0.3)
 
 # servo speeds
 UPDATES = 50            # How many times to update Servos per second
-TIME_FOR_EACH_MOVE = 0.32  # The time to travel between each values 32 is nice, used to be 25, lower numbers make the robot faster
-UPDATES_PER_MOVE = TIME_FOR_EACH_MOVE * UPDATES
+TIME_FOR_EACH_MOVE = 0.70  # The time to travel between each value. 32 is nice, used to be 25, lower numbers make the robot faster
+UPDATES_PER_MOVE = TIME_FOR_EACH_MOVE * UPDATES # 50 * 0.32 = 16
 USE_COSINE = True       # Whether or not to use a cosine path between values
 
 # servos & poses
@@ -44,7 +44,7 @@ animationToPlay = "first"
 
 # button for untethered mode
 user_sw = Button(servo2040.USER_SW)
-operationMode = "untethered"
+operationMode = "tethered"
 
 # led bar for status display
 led_bar.start()
