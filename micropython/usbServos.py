@@ -27,9 +27,9 @@ time.sleep(0.3)
 
 # servo speeds
 UPDATES = 50            # How many times to update Servos per second
-TIME_FOR_EACH_MOVE = 0.70  # The time to travel between each value. 32 is nice, used to be 25, lower numbers make the robot faster
+TIME_FOR_EACH_MOVE = 0.50  # The time to travel between each value. 32 is nice, used to be 25, lower numbers make the robot faster
 UPDATES_PER_MOVE = TIME_FOR_EACH_MOVE * UPDATES # 50 * 0.32 = 16
-USE_COSINE = True       # Whether or not to use a cosine path between values
+USE_COSINE = False       # Whether or not to use a cosine path between values
 
 # servos & poses
 servoValues = [0.0] * 9 # servo values for the current posture

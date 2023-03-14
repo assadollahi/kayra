@@ -164,7 +164,26 @@
             "bodyUpRLean",
             "Rside",
             "ankleR"
-        ]
+        ],
+        "nextnextRun": [
+            "SlightBroadStand",
+            "ankleR",
+            "Rside",
+            "bodyFrontRlean",
+            "bodyUpLLean",
+            "LSide",
+            "bodyFrontLeftLean",
+            "bodyUpRLean",
+            "Rside",
+            "bodyFrontRlean",
+            "bodyUpLLean",
+            "LSide",
+            "bodyFrontLeftLean",
+            "bodyUpRLean",
+            "Rside",
+            "SlightBroadStand"
+        ],
+        "": []
     },
     "poses": {
         "neutral": [
@@ -498,9 +517,9 @@
             0.0
         ],
         "bodyFrontLeftLean": [
+            -3.0,
             -5.0,
-            -9.0,
-            5.0,
+            3.0,
             -41.0,
             -37.0,
             -59.0,
