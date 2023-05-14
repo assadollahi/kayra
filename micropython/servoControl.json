@@ -3,583 +3,90 @@
         "first": [
             "neutral"
         ],
-        "leftrightdown": [
-            "leftdown",
-            "rightdown",
-            "leftdown",
-            "rightdown"
-        ],
-        "leftupright": [
-            "leftdown",
-            "stand",
-            "rightdown",
-            "stand",
-            "leftdown",
-            "stand",
-            "rightdown"
-        ],
-        "cyclestands": [
+        "waveRight": [
             "neutral",
-            "stand",
-            "closestand",
-            "broadstand",
-            "stand",
-            "closestand",
+            "rightArmUp",
+            "rightArmMid",
+            "rightArmUp",
+            "rightArmMid",
+            "rightArmUp",
             "neutral"
         ],
-        "walk1": [
+        "TurnAndWave": [
+            "TurnWaistLeft",
+            "lowerArmsUp",
             "neutral",
-            "stand",
-            "closestand",
-            "walkintro",
-            "walk1",
-            "walk1a",
-            "walk1b",
-            "walk1c"
+            "rightArmUp",
+            "rightArmMid",
+            "rightArmUp",
+            "neutral"
         ],
-        "standneutral": [
+        "TurnAndWaveTwo": [
+            "lowerArmsUp",
             "neutral",
-            "stand",
-            "neutral",
-            "stand"
-        ],
-        "backFront": [
-            "bodyBack",
-            "bodyFront",
-            "bodyBack",
-            "bodyFront"
-        ],
-        "newWalk": [
-            "stand",
-            "bodyBackR",
-            "bodyFrontR",
-            "stand",
-            "bodyBackL",
-            "bodyFrontL",
-            "stand"
-        ],
-        "fullWalk": [
-            "neutral",
-            "stand",
-            "bodyBackRside",
-            "bodyFrontR",
-            "bodyFrontRside",
-            "bodyFrontL",
-            "bodyFrontLside",
-            "bodyFrontR",
-            "bodyFrontRside",
-            "bodyBackL",
-            "bodyFrontLside",
-            "stand"
-        ],
-        "nextWalk": [
-            "stand",
-            "closestand",
-            "Rside",
-            "bodyFrontR",
-            "bodyFrontRsideLup",
-            "bodyFrontL"
-        ],
-        "walk3": [
-            "stand",
-            "closestand",
-            "Rside",
-            "bodyFronRbroad",
-            "bodyFrontRsideLup",
-            "bodyFrontL"
-        ],
-        "walk4": [
-            "stand",
-            "closestand",
-            "Rside",
-            "bodyFronRbroad",
-            "LSide",
-            "bodyFrontL",
-            "Rside",
-            "bodyFronRbroad",
-            "LSide",
-            "bodyFrontL",
-            "stand"
-        ],
-        "StandRAnkleRUp": [
-            "stand",
-            "ankleR",
-            "Rside",
-            "ankleR",
-            "Rside",
-            "ankleR",
-            "Rside"
-        ],
-        "StandAnkAnkRSide": [
-            "stand",
-            "ankleR",
-            "ankleR",
-            "Rside",
-            "bodyFrontRBroad"
-        ],
-        "SBSRARU": [
-            "SlightBroadStand",
-            "ankleR",
-            "Rside",
-            "SlightBroadStand"
-        ],
-        "SBSRARURF": [
-            "SlightBroadStand",
-            "ankleR",
-            "Rside",
-            "bodyFrontRBroad",
-            "LSide",
-            "bodyFrontLbroad",
-            "SlightBroadStand"
-        ],
-        "LRLR": [
-            "SlightBroadStand",
-            "ankleR",
-            "Rside",
-            "LSide",
-            "Rside",
-            "LSide",
-            "SlightBroadStand"
-        ],
-        "newRun": [
-            "SlightBroadStand",
-            "ankleR",
-            "Rside",
-            "bodyFrontRlean",
-            "LSide",
-            "bodyFrontLeftLean",
-            "Rside",
-            "bodyFrontRlean",
-            "LSide",
-            "SlightBroadStand"
-        ],
-        "nextRun": [
-            "SlightBroadStand",
-            "ankleR",
-            "Rside",
-            "bodyFrontRlean",
-            "bodyUpLLean",
-            "LSide",
-            "bodyFrontLeftLean",
-            "bodyUpRLean",
-            "Rside",
-            "ankleR"
-        ],
-        "nextnextRun": [
-            "SlightBroadStand",
-            "ankleR",
-            "Rside",
-            "bodyFrontRlean",
-            "bodyUpLLean",
-            "LSide",
-            "bodyFrontLeftLean",
-            "bodyUpRLean",
-            "Rside",
-            "bodyFrontRlean",
-            "bodyUpLLean",
-            "LSide",
-            "bodyFrontLeftLean",
-            "bodyUpRLean",
-            "Rside",
-            "SlightBroadStand"
-        ],
-        "": []
+            "rightArmUp",
+            "rightArmMid",
+            "rightArmUp",
+            "rightArmMid",
+            "rightArmUp",
+            "rightArmMid",
+            "neutral"
+        ]
     },
     "poses": {
         "neutral": [
-            2.0,
-            -3.0,
-            60.0,
-            -58.0,
-            -49.0,
-            38.0,
-            -2.0,
-            4.0,
-            0.0
-        ],
-        "leftdown": [
-            52.0,
-            6.0,
-            25.0,
-            -60.0,
-            -24.0,
-            55.0,
-            -49.0,
-            7.0,
-            0.0
-        ],
-        "rightdown": [
-            3.0,
-            -47.0,
-            59.0,
-            0.0,
-            -63.0,
-            15.0,
-            -5.0,
-            54.0,
-            0.0
-        ],
-        "stand": [
-            -1.0,
-            0.0,
-            20.0,
-            -16.0,
-            0.0,
-            -10.0,
-            0.0,
-            1.0,
-            0.0
-        ],
-        "walkintro": [
-            -9.0,
-            -13.0,
-            30.0,
-            -15.0,
-            -45.0,
-            15.0,
-            -18.0,
-            -1.0,
-            0.0
-        ],
-        "walk2": [
-            0.0,
-            10.0,
-            35.0,
-            -40.0,
-            -80.0,
-            0.0,
-            -10.0,
-            8.0,
-            0.0
-        ],
-        "walk3": [
-            -11.0,
-            7.0,
-            10.0,
-            -10.0,
-            -60.0,
-            -5.0,
-            -7.0,
-            10.0,
-            0.0
-        ],
-        "closestand": [
-            1.0,
-            5.0,
-            20.0,
-            -20.0,
-            -15.0,
-            15.0,
-            2.0,
-            -2.0,
-            0.0
-        ],
-        "walk1a": [
-            -16.0,
-            -25.0,
-            27.0,
-            -47.0,
-            -45.0,
-            66.0,
-            0.0,
-            21.0,
-            0.0
-        ],
-        "walk1b": [
-            -5.0,
-            -5.0,
-            42.0,
-            40.0,
-            10.0,
-            35.0,
-            -10.0,
-            -5.0,
-            0.0
-        ],
-        "walk1c": [
-            5.0,
-            0.0,
-            37.0,
-            0.0,
-            10.0,
-            20.0,
-            -5.0,
-            -5.0,
-            0.0
-        ],
-        "bodyFrontR": [
-            4.0,
-            9.0,
-            57.0,
-            -10.0,
-            60.0,
-            35.0,
-            1.0,
-            2.0,
-            0.0
-        ],
-        "bodyBackR": [
-            4.0,
-            9.0,
-            44.0,
-            40.0,
-            2.0,
-            20.0,
-            1.0,
-            2.0,
-            0.0
-        ],
-        "bodyBackL": [
-            4.0,
-            9.0,
-            -33.0,
-            -50.0,
-            -30.0,
-            -15.0,
-            1.0,
-            2.0,
-            0.0
-        ],
-        "bodyFrontL": [
-            4.0,
-            6.0,
-            37.0,
-            -65.0,
-            -30.0,
-            -58.0,
-            -1.0,
-            5.0,
-            0.0
-        ],
-        "bodyBackRside": [
-            -11.0,
-            -8.0,
-            44.0,
-            42.0,
-            0.0,
-            25.0,
-            -5.0,
-            5.0,
-            0.0
-        ],
-        "bodyFrontRside": [
-            7.0,
-            21.0,
-            59.0,
-            -21.0,
-            60.0,
-            35.0,
-            1.0,
-            12.0,
-            0.0
-        ],
-        "bodyFrontLside": [
-            -14.0,
-            -8.0,
-            35.0,
-            -69.0,
-            -23.0,
-            -58.0,
-            -3.0,
-            9.0,
-            0.0
-        ],
-        "bodyBackRsideLup": [
-            -11.0,
-            -8.0,
-            44.0,
-            -58.0,
-            0.0,
-            50.0,
-            -5.0,
-            5.0,
-            0.0
-        ],
-        "Rside": [
-            -16.0,
-            -15.0,
-            24.0,
-            -55.0,
-            0.0,
-            19.0,
-            11.0,
-            18.0,
-            0.0
-        ],
-        "bodyFrontRsideLup": [
-            7.0,
-            21.0,
-            62.0,
-            -24.0,
-            -40.0,
-            35.0,
-            -13.0,
-            -1.0,
-            0.0
-        ],
-        "LSide": [
-            14.0,
-            14.0,
-            29.0,
-            -7.0,
-            -51.0,
-            -3.0,
-            -16.0,
-            -7.0,
-            0.0
-        ],
-        "BroadStand": [
-            24.0,
-            -21.0,
-            25.0,
-            -25.0,
-            -25.0,
-            20.0,
-            -26.0,
-            23.0,
-            0.0
-        ],
-        "bodyFrontRBroad": [
-            7.0,
-            3.0,
-            57.0,
-            -10.0,
-            60.0,
-            35.0,
-            -8.0,
-            3.0,
-            0.0
-        ],
-        "ankleR": [
-            -13.0,
-            -10.0,
-            27.0,
-            -17.0,
-            -1.0,
-            -6.0,
-            5.0,
-            4.0,
-            0.0
-        ],
-        "BroadOutStand": [
-            31.0,
-            -29.0,
-            25.0,
-            -25.0,
-            -25.0,
-            20.0,
-            -26.0,
-            23.0,
-            0.0
-        ],
-        "StandOut": [
-            19.0,
-            -21.0,
-            20.0,
-            -16.0,
-            0.0,
-            -10.0,
-            0.0,
-            1.0,
-            0.0
-        ],
-        "bodyFrontLbroad": [
-            8.0,
-            -2.0,
-            5.0,
-            -47.0,
-            -37.0,
-            -51.0,
-            -8.0,
-            3.0,
-            0.0
-        ],
-        "SlightBroadStand": [
-            1.0,
             -4.0,
-            20.0,
-            -16.0,
+            -4.0,
             0.0,
-            -10.0,
-            -1.0,
-            6.0,
-            0.0
-        ],
-        "bodyFrontRlean": [
-            5.0,
-            1.0,
-            57.0,
-            -10.0,
-            60.0,
-            35.0,
-            -6.0,
-            2.0,
-            0.0
-        ],
-        "bodyFrontLeftLean": [
-            -3.0,
-            -5.0,
-            3.0,
-            -41.0,
-            -37.0,
-            -59.0,
-            1.0,
-            7.0,
-            0.0
-        ],
-        "bodyUpLLean": [
-            18.0,
             0.0,
+            0.0,
+            10.0,
+            -10.0,
+            0.0,
+            0.0
+        ],
+        "rightArmUp": [
+            -4.0,
+            -4.0,
+            0.0,
+            110.0,
+            0.0,
+            -15.0,
+            -10.0,
+            0.0,
+            0.0
+        ],
+        "rightArmMid": [
+            -4.0,
+            -4.0,
+            0.0,
+            70.0,
+            0.0,
+            -15.0,
+            -10.0,
+            0.0,
+            0.0
+        ],
+        "lowerArmsUp": [
+            -4.0,
+            -4.0,
+            0.0,
+            0.0,
+            0.0,
+            45.0,
+            -50.0,
+            0.0,
+            0.0
+        ],
+        "TurnWaistLeft": [
             46.0,
-            -10.0,
-            60.0,
-            12.0,
-            -6.0,
-            2.0,
-            0.0
-        ],
-        "bodyUpRLean": [
-            -12.0,
-            -25.0,
-            7.0,
-            -35.0,
-            -16.0,
-            -57.0,
-            -1.0,
-            5.0,
-            0.0
-        ],
-        "RightUp": [
-            -16.0,
-            -15.0,
-            30.0,
-            -62.0,
+            -4.0,
             0.0,
-            42.0,
-            11.0,
-            18.0,
-            0.0
-        ],
-        "LeanRight": [
-            -16.0,
-            -15.0,
-            30.0,
-            -62.0,
             0.0,
-            42.0,
-            -62.0,
-            18.0,
-            0.0
-        ],
-        "StretchUpRight": [
-            -3.0,
-            -1.0,
-            30.0,
-            -62.0,
             0.0,
-            42.0,
-            -79.0,
-            85.0,
+            45.0,
+            -50.0,
+            0.0,
             0.0
         ]
     }
