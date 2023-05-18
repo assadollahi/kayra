@@ -1,14 +1,17 @@
 import sys
+import gc
 import time
 import math
 import json
 from pimoroni import Button
 from plasma import WS2812
-from servo import Servo, servo2040
+from servo import ServoCluster, servo2040
+
+gc.collect()
 
 """
-- create multiple Servo objects
-- control them together via serial commands from PC.
+- create servo cluster
+- control it together via serial commands from PC.
 - uses code from pimoroni servo 2040 examples to move servos smoothly
 """
 
@@ -18,13 +21,11 @@ led_bar = WS2812(servo2040.NUM_LEDS, 1, 0, servo2040.LED_DATA)
 # Create a list of servos for pins 0 to 3. Up to 16 servos can be created
 START_PIN = servo2040.SERVO_1
 END_PIN = servo2040.SERVO_18
-print("end pin: " + str(END_PIN))
-servos = [Servo(i) for i in range(START_PIN, END_PIN + 1)]
+servos = ServoCluster(pio=0, sm=0, pins=list(range(START_PIN, END_PIN + 1)))
 
-# Enable all servos (this puts them at the middle)
-for s in servos:
-    s.enable()
-time.sleep(0.3)
+# Enable all servos (this sets them to middle position)
+servos.enable_all()
+time.sleep(0.5)
 
 # servo speeds
 TOTAL_SERVOS = 18
@@ -37,8 +38,8 @@ USE_COSINE = False       # Whether or not to use a cosine path between values
 servoValues = [0.0] * TOTAL_SERVOS # servo values for the current posture
 nextServoValues = [0.0] * TOTAL_SERVOS # servo values for the next posture provided by SAS command
 poseDictionary = {} # dictionary of posture names and their servoValues
-poseName = "neutral"
-untetheredStartPose = "neutral"
+poseName = "crouch"
+untetheredStartPose = "crouch"
 
 # animation
 animationDictionary = {} # dictionary of animation names and their list of poses
@@ -53,7 +54,7 @@ led_bar.start()
 
 def setSingleServo(inServos, inServoNumber, inServoValue):
     # set servo value
-    inServos[inServoNumber].value(inServoValue)
+    inServos.value(inServoNumber, inServoValue)
                         
     # give servo time to react
     time.sleep(0.1)
@@ -66,12 +67,12 @@ def setAllServos(inServos, inServoValues, inNextServoValues):
 
         if USE_COSINE:
             # Move the servo between values using cosine
-            for eachServoNumber in range(0,TOTAL_SERVOS-1):
-                inServos[eachServoNumber].to_percent(math.cos(percent_along * math.pi), 1.0, -1.0, inServoValues[eachServoNumber], inNextServoValues[eachServoNumber])
+            for eachServoNumber in range(0,TOTAL_SERVOS):
+                inServos.to_percent(eachServoNumber, math.cos(percent_along * math.pi), 1.0, -1.0, inServoValues[eachServoNumber], inNextServoValues[eachServoNumber])
         else:
             # Move the servo linearly between values
-            for eachServoNumber in range(0,TOTAL_SERVOS-1):
-                inServos[eachServoNumber].to_percent(percent_along, 0.0, 1.0, inServoValues[eachServoNumber], inNextServoValues[eachServoNumber])                
+            for eachServoNumber in range(0,TOTAL_SERVOS):
+                inServos.to_percent(eachServoNumber, percent_along, 0.0, 1.0, inServoValues[eachServoNumber], inNextServoValues[eachServoNumber])                
         
         time.sleep(1.0 / UPDATES)
 
@@ -261,7 +262,7 @@ elif operationMode == "tethered":
                 setAllServos(servos, servoValues, nextServoValues)
                     
                 # now copy the new values to the old state    
-                for eachServoNumber in range(0,TOTAL_SERVOS-1):
+                for eachServoNumber in range(0,TOTAL_SERVOS):
                     servoValues[eachServoNumber] = nextServoValues[eachServoNumber]
             
             elif cmdString == "snp":
@@ -295,14 +296,14 @@ elif operationMode == "tethered":
                 for eachPose in animationDictionary[animationName]:
                     
                     # get next animation step
-                    for eachServoNumber in range(0,TOTAL_SERVOS-1):
+                    for eachServoNumber in range(0,TOTAL_SERVOS):
                         nextServoValues[eachServoNumber] = poseDictionary[eachPose][eachServoNumber]
                     
                     # now interpolate between the servos    
                     setAllServos(servos, servoValues, nextServoValues)
                     
                     # now copy the new values to the old state    
-                    for eachServoNumber in range(0,TOTAL_SERVOS-1):
+                    for eachServoNumber in range(0,TOTAL_SERVOS):
                         servoValues[eachServoNumber] = nextServoValues[eachServoNumber]
                     
             elif cmdString == "tup":
@@ -351,8 +352,7 @@ else:
     print("operation mode unknown")
     
 # Disable the servos
-for s in servos:
-    s.disable()
+servos.disable_all()
 
 # Turn off the LED bar
 led_bar.clear()

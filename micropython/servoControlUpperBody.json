@@ -1,0 +1,93 @@
+{
+    "animations": {
+        "first": [
+            "neutral"
+        ],
+        "waveRight": [
+            "neutral",
+            "rightArmUp",
+            "rightArmMid",
+            "rightArmUp",
+            "rightArmMid",
+            "rightArmUp",
+            "neutral"
+        ],
+        "TurnAndWave": [
+            "TurnWaistLeft",
+            "lowerArmsUp",
+            "neutral",
+            "rightArmUp",
+            "rightArmMid",
+            "rightArmUp",
+            "neutral"
+        ],
+        "TurnAndWaveTwo": [
+            "lowerArmsUp",
+            "neutral",
+            "rightArmUp",
+            "rightArmMid",
+            "rightArmUp",
+            "rightArmMid",
+            "rightArmUp",
+            "rightArmMid",
+            "neutral"
+        ]
+    },
+    "poses": {
+        "neutral": [
+            -4.0,
+            -4.0,
+            0.0,
+            0.0,
+            0.0,
+            10.0,
+            -10.0,
+            0.0,
+            0.0
+        ],
+        "rightArmUp": [
+            -4.0,
+            -4.0,
+            0.0,
+            110.0,
+            0.0,
+            -15.0,
+            -10.0,
+            0.0,
+            0.0
+        ],
+        "rightArmMid": [
+            -4.0,
+            -4.0,
+            0.0,
+            70.0,
+            0.0,
+            -15.0,
+            -10.0,
+            0.0,
+            0.0
+        ],
+        "lowerArmsUp": [
+            -4.0,
+            -4.0,
+            0.0,
+            0.0,
+            0.0,
+            45.0,
+            -50.0,
+            0.0,
+            0.0
+        ],
+        "TurnWaistLeft": [
+            46.0,
+            -4.0,
+            0.0,
+            0.0,
+            0.0,
+            45.0,
+            -50.0,
+            0.0,
+            0.0
+        ]
+    }
+}

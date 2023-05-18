@@ -14,7 +14,7 @@ serialPort = -1
 
 # servos
 servoNumber = 0 # current servo to be controlled
-servoValues = [0.0] * 9 # storing all servo values
+servoValues = [0.0] * 18 # storing all servo values
 servoStep = 10 # moving servo by this angle on key press
 
 # poses
@@ -138,8 +138,8 @@ def controlUI(stdscr):
                 if keypress == curses.KEY_DOWN:
                     servoNumber += 1
                     
-                    if (servoNumber > 8):
-                        servoNumber = 8
+                    if (servoNumber > 17):
+                        servoNumber = 17
                         
                     stdscr.addstr(3, 4, "servo " + str(servoNumber) + " selected: " + str(servoValues[servoNumber]))
                        
