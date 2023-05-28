@@ -7,7 +7,7 @@ from pimoroni import Button
 from plasma import WS2812
 from servo import ServoCluster, servo2040
 
-gc.collect()
+
 
 """
 - create servo cluster
@@ -229,6 +229,8 @@ elif operationMode == "tethered":
     led_bar.set_rgb(5, 0, 0, 120) # blue on LED5
     
     while True:
+        # clean up memory
+        gc.collect()
 
         # read a command from the host
         inCommand = sys.stdin.readline().strip()

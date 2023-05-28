@@ -11,6 +11,7 @@ import json
 # connections
 currentPort = 0 # first serial port 
 serialPort = -1
+serialSelected = False
 
 # servos
 servoNumber = 0 # current servo to be controlled
@@ -76,7 +77,7 @@ def setUntetheredAnimation(inAnimName):
 
 def controlUI(stdscr):
 
-    global currentPort, serialPort
+    global currentPort, serialPort, serialSelected
     global servoNumber, servoValues, servoStep
     global poseDictionary, poseName, poseHighlighted, poseNumber
     global animationNumber, animationName, animationDictionary, animationStep
@@ -92,7 +93,31 @@ def controlUI(stdscr):
     stdscr.nodelay(1)
     
     while True:
+
+        if serialSelected == True:
+            #stdscr.addstr(20, 4, "serial connection established") 
         
+            if serialPort.inWaiting() > 0:
+            
+                '''    
+                # Read data out of the buffer until a carraige return / new line is found
+                serialString = ""
+                while True:
+                    ch = serialPort.read()
+                    serialString += chr(int(ch))
+                    if ch=='\r' or ch=='':
+                        break
+
+                #serialString = serialPort.read(3) #readline()
+                '''
+                ser_bytes = serialPort.readline()
+                decoded_bytes = ser_bytes[0:len(ser_bytes)-2].decode("utf-8")
+                #print(decoded_bytes)
+
+                # Print the contents of the serial data
+                stdscr.addstr(20, 4, decoded_bytes) #serialString.decode('ASCII'))
+
+
         keypress = stdscr.getch()
         
         if keypress != curses.ERR:
@@ -307,6 +332,7 @@ def controlUI(stdscr):
                     stdscr.addstr(3, 4, "connecting to " + ports[currentPort].description) 
                     # open selected serial connection, e.g. "/dev/ttyACM1"
                     serialPort = serial.Serial(ports[currentPort].device, 115200)
+                    serialSelected = True
                     inputMode = "connect"
                     
                 if keypress == ord('p'):
