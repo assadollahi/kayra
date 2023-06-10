@@ -92,6 +92,8 @@ def controlUI(stdscr):
     curses.curs_set(0) 
     stdscr.nodelay(1)
     
+    imuData = ""
+
     while True:
 
         if serialSelected == True:
@@ -111,19 +113,15 @@ def controlUI(stdscr):
                 #serialString = serialPort.read(3) #readline()
                 '''
                 ser_bytes = serialPort.readline()
-                decoded_bytes = ser_bytes[0:len(ser_bytes)-2].decode("utf-8")
-                #print(decoded_bytes)
-
-                # Print the contents of the serial data
-                stdscr.addstr(20, 4, decoded_bytes) #serialString.decode('ASCII'))
+                imuData = ser_bytes[0:len(ser_bytes)-2].decode("utf-8")
 
 
         keypress = stdscr.getch()
         
         if keypress != curses.ERR:
-            
+            # clear screen
             stdscr.clear()
-
+         
             # non-character entry
             if inputMode == "connect":
                 # connect controller via serial port 
@@ -633,7 +631,12 @@ def controlUI(stdscr):
                 else:
                     stdscr.addstr(lineCounter, 4, eachSinglePose + ":\t" + "\t".join(strValues))
                 lineCounter += 1 
-                                   
+
+
+        # Print the contents of the serial data
+        stdscr.addstr(25, 4, imuData)  
+        stdscr.refresh()
+
         time.sleep(0.05)
 
 

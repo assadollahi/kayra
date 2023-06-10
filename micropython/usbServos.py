@@ -5,12 +5,20 @@ import json
 from pimoroni import Button
 from plasma import WS2812
 from servo import Servo, servo2040
+from bno055 import *
 
 """
 - create multiple Servo objects
 - control them together via serial commands from PC.
 - uses code from pimoroni servo 2040 examples to move servos smoothly
 """
+# connect IMU
+sda=machine.Pin(20) # Explorer 20 Breakout 4
+scl=machine.Pin(21) # Explorer 21 Breakout 5
+i2c=machine.I2C(0,sda=sda, scl=scl, freq=400000)
+
+imu = BNO055(i2c)
+calibrated = False
 
 # Create the LED bar, using PIO 1 and State Machine 0
 led_bar = WS2812(servo2040.NUM_LEDS, 1, 0, servo2040.LED_DATA)
@@ -18,7 +26,7 @@ led_bar = WS2812(servo2040.NUM_LEDS, 1, 0, servo2040.LED_DATA)
 # Create a list of servos for pins 0 to 3. Up to 16 servos can be created
 START_PIN = servo2040.SERVO_1
 END_PIN = servo2040.SERVO_18
-print("end pin: " + str(END_PIN))
+# print("end pin: " + str(END_PIN))
 servos = [Servo(i) for i in range(START_PIN, END_PIN + 1)]
 
 # Enable all servos (this puts them at the middle)
@@ -51,12 +59,28 @@ operationMode = "tethered"
 # led bar for status display
 led_bar.start()
 
+def sendIMUToHost():
+    '''
+    if not calibrated:
+        calibrated = imu.calibrated()
+        print('Calibration required: sys {} gyro {} accel {} mag {}'.format(*imu.cal_status()))
+    print('Temperature {}°C'.format(imu.temperature()))
+    print('Mag       x {:5.0f}    y {:5.0f}     z {:5.0f}'.format(*imu.mag()))
+    print('Gyro      x {:5.0f}    y {:5.0f}     z {:5.0f}'.format(*imu.gyro()))
+    print('Accel     x {:5.1f}    y {:5.1f}     z {:5.1f}'.format(*imu.accel()))
+    print('Lin acc.  x {:5.1f}    y {:5.1f}     z {:5.1f}'.format(*imu.lin_acc()))
+    print('Gravity   x {:5.1f}    y {:5.1f}     z {:5.1f}'.format(*imu.gravity()))
+    '''
+    print('Heading     {:4.0f} roll {:4.0f} pitch {:4.0f}'.format(*imu.euler()))
+
 def setSingleServo(inServos, inServoNumber, inServoValue):
     # set servo value
     inServos[inServoNumber].value(inServoValue)
                         
     # give servo time to react
     time.sleep(0.1)
+    # send new data IMU to host
+    sendIMUToHost() 
 
 def setAllServos(inServos, inServoValues, inNextServoValues):
     
@@ -74,6 +98,8 @@ def setAllServos(inServos, inServoValues, inNextServoValues):
                 inServos[eachServoNumber].to_percent(percent_along, 0.0, 1.0, inServoValues[eachServoNumber], inNextServoValues[eachServoNumber])                
         
         time.sleep(1.0 / UPDATES)
+        # send new data IMU to host
+        sendIMUToHost() 
 
 def writeConfig():
     configDictionary = {} # store configuration: operation mode, initial pose, animation to play    
@@ -177,16 +203,19 @@ if operationMode == "untethered":
     msCounter = 0
     buttonPressed = False
     while True:
+        # send new data IMU to host
+        sendIMUToHost()
+        time.sleep(0.1)
         
         # however, if the user button has been pushed, play last animation
         if user_sw.raw():
             # count how long it has been pressed
             print("button")
             msCounter += 1
-            time.sleep(0.05) # wait 50ms
+            #time.sleep(0.05) # wait 50ms
             
             # check press duration
-            if msCounter > 20:
+            if msCounter > 10:
             # long press
                 print("long press")
                 # set operationMode to 'tethered' again
@@ -228,6 +257,9 @@ elif operationMode == "tethered":
     led_bar.set_rgb(5, 0, 0, 120) # blue on LED5
     
     while True:
+        # send new data IMU to host
+        sendIMUToHost()
+        time.sleep(0.1)
 
         # read a command from the host
         inCommand = sys.stdin.readline().strip()
@@ -236,7 +268,7 @@ elif operationMode == "tethered":
         if len(inCommand) > 0:
             #led_bar.set_hsv(0, 1.0, 1.0, 0.5)     
 
-            print(inCommand)
+            # print(inCommand)
             inCommandSplit = inCommand.split()
             cmdString = inCommandSplit[0]
             
