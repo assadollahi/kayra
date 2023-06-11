@@ -32,6 +32,13 @@
             "liftLeft",
             "leftForward",
             "rightDown"
+        ],
+        "liftLegAndBack": [
+            "neutral",
+            "leanRight",
+            "liftLeft",
+            "semiOutLeft",
+            "neutral"
         ]
     },
     "poses": {

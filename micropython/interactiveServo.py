@@ -7,6 +7,7 @@ import serial
 import serial.tools.list_ports
 import time
 import json
+import numpy as np
 
 # connections
 currentPort = 0 # first serial port 
@@ -36,6 +37,37 @@ animationDictionary.update({animationName : [poseName]}) # first animation consi
 inputMode = "connect" # what state should receive the keyboard input
 textEntered = "" # when entering a text, store it here across key strokes
 textIntent = "" # use the entered text for this intent 
+
+def getOrderedListOfSimilarPosesForPose(basePoseName, inListOfPoses):
+    baseServoValues = np.array(inListOfPoses[basePoseName])
+
+    # compute all euclidean distances
+    compareDictionary = {}
+    for eachPoseName in inListOfPoses:
+        compareServoValues = np.array(inListOfPoses[eachPoseName])
+
+        euclideanDistance = np.linalg.norm(baseServoValues - compareServoValues)
+        compareDictionary[eachPoseName] = euclideanDistance
+
+    # now sort the dictionary by distance
+    poseNameList = list(compareDictionary.keys())
+    euclideanDistanceList = list(compareDictionary.values())
+    sorted_value_index = np.argsort(euclideanDistanceList)
+    sorted_dict = {poseNameList[i]: euclideanDistanceList[i] for i in sorted_value_index}
+
+    return sorted_dict
+
+def similarPosesDictToStr(inSimilarPosesDic):
+    outStr = ""
+
+    poseCounter = 0
+    for eachKey in inSimilarPosesDic:
+        outStr += eachKey + " " + f"{inSimilarPosesDic[eachKey]:.2f}" + " "
+        poseCounter += 1
+        if poseCounter > 7:
+            break
+
+    return outStr
 
 def sendCommand(inCommand):
     # this should be the only place where commands are sent 
@@ -208,7 +240,10 @@ def controlUI(stdscr):
                     # transfer the pose poseName to the servo controller when hitting CR
                     servoValues = copy.deepcopy(poseDictionary[poseName])
                     stdscr.addstr(3, 4, "pose " + poseName + " selected: \t" + ", ".join([str(flt) for flt in servoValues]))   
-                    setAllServos(servoValues) 
+                    setAllServos(servoValues)
+
+                    similarPosesDict = getOrderedListOfSimilarPosesForPose(poseName, poseDictionary)
+                    stdscr.addstr(23, 4, similarPosesDictToStr(similarPosesDict))  
             
             elif inputMode == "animation":
                 animationNumber = 0
