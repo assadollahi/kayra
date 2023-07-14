@@ -58,11 +58,12 @@ def getOrderedListOfSimilarPosesForPose(basePoseName, inListOfPoses):
     return sorted_dict
 
 def similarPosesDictToStr(inSimilarPosesDic):
-    outStr = ""
+    outStr = "similar poses: "
 
     poseCounter = 0
     for eachKey in inSimilarPosesDic:
-        outStr += eachKey + " " + f"{inSimilarPosesDic[eachKey]:.2f}" + " "
+        if poseCounter > 0:
+            outStr += eachKey + " " + f"{inSimilarPosesDic[eachKey]:.2f}" + " "
         poseCounter += 1
         if poseCounter > 7:
             break
@@ -243,7 +244,7 @@ def controlUI(stdscr):
                     setAllServos(servoValues)
 
                     similarPosesDict = getOrderedListOfSimilarPosesForPose(poseName, poseDictionary)
-                    stdscr.addstr(23, 4, similarPosesDictToStr(similarPosesDict))  
+                    stdscr.addstr(4, 4, similarPosesDictToStr(similarPosesDict))  
             
             elif inputMode == "animation":
                 animationNumber = 0
@@ -626,15 +627,17 @@ def controlUI(stdscr):
             stdscr.addstr(2, 4, "pose mode")
             
             # print out overview
-            stdscr.addstr(4, 4, "servo values:")
+            stdscr.addstr(5, 4, "servo values:")
             poseList = list(poseDictionary)
-            lineCounter = 5
+            lineCounter = 6
             for eachSinglePose in poseList:
-                strValues = [str(singleValue) for singleValue in poseDictionary[eachSinglePose]] 
+                strValues = [str(int(singleValue)) for singleValue in poseDictionary[eachSinglePose]] 
                 if eachSinglePose == poseName:
-                    stdscr.addstr(lineCounter, 4, eachSinglePose + ":\t" + "\t".join(strValues), curses.A_REVERSE)
+                    stdscr.addstr(lineCounter, 4, eachSinglePose + ":", curses.A_REVERSE)
+                    stdscr.addstr(lineCounter, 24, "\t".join(strValues), curses.A_REVERSE)
                 else:
-                    stdscr.addstr(lineCounter, 4, eachSinglePose + ":\t" + "\t".join(strValues))
+                    stdscr.addstr(lineCounter, 4, eachSinglePose + ":")
+                    stdscr.addstr(lineCounter, 24, "\t".join(strValues))
                 lineCounter += 1
      
         elif inputMode == "animation":
@@ -669,7 +672,7 @@ def controlUI(stdscr):
 
 
         # Print the contents of the serial data
-        stdscr.addstr(25, 4, imuData)  
+        stdscr.addstr(1, 4, imuData)  
         stdscr.refresh()
 
         time.sleep(0.05)
