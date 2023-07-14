@@ -59,7 +59,16 @@
             "rightForward",
             "rightDown",
             "swingRightForward",
-            "leanRightForward"
+            "leanRightForward",
+            "liftLeft",
+            "leftForward",
+            "leftDown",
+            "swingLeftForward",
+            "leanLeftForward",
+            "liftRight",
+            "rightForward",
+            "rightDown",
+            "swingRightForward"
         ]
     },
     "poses": {
@@ -104,7 +113,7 @@
             0.0
         ],
         "leanRight": [
-            14.0,
+            24.0,
             2.0,
             36.0,
             -30.0,
