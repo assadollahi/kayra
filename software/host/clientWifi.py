@@ -15,9 +15,11 @@ s.connect(sockaddr)
 
 def sendText(textToSend):
    s.send(textToSend.encode()) 
+   '''
    data = ''
    data = s.recv(1024).decode()
    print ("received: " + data)
+   '''
 
 while True:
    enteredText = input('enter: ')
