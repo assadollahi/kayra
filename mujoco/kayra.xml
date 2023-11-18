@@ -1,0 +1,23 @@
+<mujoco model="hello">
+  <option gravity="0 0 -9.81"/>
+
+
+  <asset>
+    <material name="black" rgba="0.0 0.5 0.5 1"/>
+    <mesh name="1L_foot" file="/Users/ramin/kayra/STL/1L_foot-Body.stl"/>
+  </asset>  
+
+  <worldbody>
+    <!-- light pos="0 0 1" dir="0 0 -1" diffuse="0.1 0.8 0.8"/-->
+    <light directional="true" pos="-0.5 0.5 3" dir="0 0 -1" />
+    <!-- geom name="floor" size="1 1 0.05" rgba="1.0 0.0 0.0 1.0" type="plane"/-->
+    <geom name="floor" pos="0 0 -0.1" size="0 0 0.1" type="plane" rgba="0.4 0.4 0.4 1.0"/>
+    <body pos="0 0 15" euler= "0 0 0">
+        <joint type="free"/>
+        <inertial pos="0 0 0.1" mass="0.05" diaginertia="0.1 0.1 0.1"/>
+        <!--geom type="box" size="0.1 0.2 0.3" rgba="0.0 1.0 0.0 1.0"/ -->
+        <geom mesh="1L_foot" type="mesh"/>
+    </body>
+  </worldbody>
+
+</mujoco>
