@@ -1,10 +1,20 @@
 <mujoco model="hello">
   <option gravity="0 0 -9.81"/>
 
+<default>
+  <mesh scale="0.01 0.01 0.01"/>
+  <geom type="mesh" solref="0.005 1"/>
+</default>
 
   <asset>
-    <material name="black" rgba="0.0 0.5 0.5 1"/>
-    <mesh name="1L_foot" file="/Users/ramin/kayra/STL/1L_foot-Body.stl"/>
+    <material name="blue" rgba="0.23 0.51 0.74 1"/>
+    <material name="yellow" rgba="0.99 0.74 0.0 1"/>
+    <material name="white" rgba="0.98 0.98 0.97 1"/>
+    <mesh name="1R_foot" file="../STL/1R_foot-Body.stl"/>
+    <mesh name="2R_footJoint" file="../STL/2R_footJoint_bearing-Body.stl"/>
+    <mesh name="3BR_calf" file="../STL/3BR_calf-Body.stl"/>
+    <mesh name="3FU_shin" file="../STL/3FU_shin-Body.stl"/>
+    <mesh name="4R_knee" file="../STL/4R_knee-Body.stl"/>
   </asset>  
 
   <worldbody>
@@ -12,12 +22,36 @@
     <light directional="true" pos="-0.5 0.5 3" dir="0 0 -1" />
     <!-- geom name="floor" size="1 1 0.05" rgba="1.0 0.0 0.0 1.0" type="plane"/-->
     <geom name="floor" pos="0 0 -0.1" size="0 0 0.1" type="plane" rgba="0.4 0.4 0.4 1.0"/>
-    <body pos="0 0 15" euler= "0 0 0">
+    <body pos="0 0 1" euler= "0 0 0">
         <joint type="free"/>
-        <inertial pos="0 0 0.1" mass="0.05" diaginertia="0.1 0.1 0.1"/>
-        <!--geom type="box" size="0.1 0.2 0.3" rgba="0.0 1.0 0.0 1.0"/ -->
-        <geom mesh="1L_foot" type="mesh"/>
+        <inertial pos="0 0 0.1" mass="0.10" diaginertia="0.005 0.005 0.005"/>
+        <geom mesh="1R_foot" type="mesh" material="blue"/>
     </body>
+
+    <body pos="0 0 2" euler= "0 0 0">
+        <joint type="free"/>
+        <inertial pos="0 0 0.1" mass="0.05" diaginertia="0.005 0.005 0.005"/>
+        <geom mesh="2R_footJoint" type="mesh" material="yellow"/>
+    </body>
+
+    <body pos="0 0.0 1.5" euler= "0 0 0">
+        <joint type="free"/>
+        <inertial pos="0 0 0.1" mass="0.10" diaginertia="0.005 0.005 0.005"/>
+        <geom mesh="3BR_calf" type="mesh" material="white"/>
+    </body>
+
+    <body pos="0 0 2.5" euler= "0 0 0">
+        <joint type="free"/>
+        <inertial pos="0 0 0.1" mass="0.05" diaginertia="0.005 0.005 0.005"/>
+        <geom mesh="3FU_shin" type="mesh" material="blue"/>
+    </body>
+
+    <body pos="0 0 3.0" euler= "0 0 0">
+        <joint type="free"/>
+        <inertial pos="0 0 0.1" mass="0.05" diaginertia="0.005 0.005 0.005"/>
+        <geom mesh="4R_knee" type="mesh" material="white"/>
+    </body>
+
   </worldbody>
 
 </mujoco>
