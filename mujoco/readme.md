@@ -28,3 +28,10 @@ https://github.com/deepmind/mujoco/issues/172
 it's the file fourBars.xml in kayra's mujoco dir, i've added gravity
 so that you can see that the loops behaves mechanically correctly.
 
+the corresponding kayra file is kayraCircle.xml, it connects:
+- 4R_Link (knee) to
+- 3BR_Link (calf, back part, containing the servo / actuator) to
+- 2R_Link (foot joint / ankle) to
+- 3FU_Link (shin, front part of the leg)
+
+
