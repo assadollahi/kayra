@@ -8,9 +8,11 @@
 </default>
 
   <asset>
+    <texture name="grid" type="2d" builtin="checker" width="512" height="512" rgb1=".1 .2 .3" rgb2=".2 .3 .4"/>
     <material name="blue" rgba="0.23 0.51 0.74 1"/>
     <material name="yellow" rgba="0.99 0.74 0.0 1"/>
     <material name="white" rgba="0.98 0.98 0.97 1"/>
+    <material name="grid" texture="grid" texrepeat="1 1" texuniform="true" reflectance=".2"/>
     <mesh name="1R_foot" file="../STL/1R_foot-Body.stl"/>
     <mesh name="2R_footJoint" file="../STL/2R_footJoint_bearing-Body.stl"/>
     <mesh name="3BR_calf" file="../STL/3BR_calf-Body.stl"/>
@@ -19,22 +21,31 @@
   </asset>  
 
   <worldbody>
+   <camera name="global" pos="-2.0 2.0 3" xyaxes="-1.0 -1 0 1.0 0 1" mode="trackcom"/>
     <!-- light pos="0 0 1" dir="0 0 -1" diffuse="0.1 0.8 0.8"/-->
     <light directional="true" pos="-0.5 0.5 3" dir="0 0 -1" />
     <!-- geom name="floor" size="1 1 0.05" rgba="1.0 0.0 0.0 1.0" type="plane"/-->
-    <geom name="floor" pos="0 0 -0.1" size="0 0 0.1" type="plane" rgba="0.4 0.4 0.4 1.0"/>
-    <body name="4RkneeLink" pos="0 0 0.8" euler= "1.0 0.0 0.0">
+    <!-- geom name="floor" pos="0 0 -0.1" size="0 0 0.1" type="plane" rgba="0.4 0.4 0.4 1.0"/-->
+    <geom name="floor" size="0 0 .05" type="plane" material="grid" condim="3"/>
+    <body name="4RkneeLink" pos="0 0 1.8" euler= "0.5 0.5 0.0">
         <joint type="free"/>
 
         <inertial pos="0 0 0.1" mass="0.10" diaginertia="0.005 0.005 0.005"/>
         <geom mesh="4R_knee" type="mesh" material="white"/>
 
-        <body name="3FULink" pos="0.0 0.28 0.25">
-                <joint name="3FUJoint" axis="1 0 0" pos="0.01 -0.33 0.03"/>
- 
-                <inertial pos="0 0 0" mass="0.05" diaginertia="0.005 0.005 0.005"/>
-                <geom mesh="3FU_shin" type="mesh"  euler="0 3.14 0" pos="0.0 0.0 0.0" material="blue"/>
+        <body name="3FULink" pos="0.0 -0.025 -0.6" euler="-1.57 0 0">
+            <joint name="3FUJoint" axis="1 0 0" pos="0.01 -0.33 -0.03"/>
+
+            <inertial pos="0 0 0" mass="0.05" diaginertia="0.005 0.005 0.005"/>
+            <geom mesh="3FU_shin" type="mesh" euler="0 0 0" pos="0.0 0.0 0.0" material="blue"/>
         </body> 
+
+        <body name="3BRJoint" pos="0 -0.17 -0.225" euler="1.57 0 -1.57">
+             <joint name="3BRJoint" axis="0 1 0" pos="-0.10 0.0 0.14"/>
+
+            <inertial pos="0 0 0" mass="0.10" diaginertia="0.005 0.005 0.005"/>
+            <geom mesh="3BR_calf" type="mesh" euler="0 0 0" pos="0.0 0.0 0.0" material="white"/>
+        </body>
     </body>
 <!--
     <body pos="0 0 2" euler= "0 0 0">
