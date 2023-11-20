@@ -1,10 +1,11 @@
-<mujoco model="hello">
+<mujoco model="Kayra">
   <option gravity="0 0 -9.81"/>
    <compiler angle="radian"/>
 
 <default>
   <mesh scale="0.01 0.01 0.01"/>
   <geom type="mesh" solref="0.005 1"/>
+  <position kp="21.1" ctrlrange="-3.141592 3.141592" forcerange="-5 5"/>
 </default>
 
   <asset>
@@ -21,13 +22,13 @@
   </asset>  
 
   <worldbody>
-   <camera name="global" pos="-2.0 2.0 3" xyaxes="-1.0 -1 0 1.0 0 1" mode="trackcom"/>
+   <camera name="follow" pos="-2.0 2.0 3" xyaxes="-1.0 -1 0 1.0 0 1" mode="trackcom"/>
     <!-- light pos="0 0 1" dir="0 0 -1" diffuse="0.1 0.8 0.8"/-->
     <light directional="true" pos="-0.5 0.5 3" dir="0 0 -1" />
     <!-- geom name="floor" size="1 1 0.05" rgba="1.0 0.0 0.0 1.0" type="plane"/-->
     <!-- geom name="floor" pos="0 0 -0.1" size="0 0 0.1" type="plane" rgba="0.4 0.4 0.4 1.0"/-->
     <geom name="floor" size="0 0 .05" type="plane" material="grid" condim="3"/>
-    <body name="4R_Link" pos="0 0 1.8" euler= "0.5 1.5 0.0">
+    <body name="4R_Link" pos="0 0 1.8" euler= "-0.0 0.0 0.0">
         <joint type="free"/>
 
         <inertial pos="0 0 0.1" mass="0.10" diaginertia="0.005 0.005 0.005"/>
@@ -52,7 +53,11 @@
 					<geom mesh="3FU_shin" type="mesh" euler="0 0 0" pos="0.0 0.0 0.0" material="blue"/>
 				</body> 
 
-				<!-- add foot here -->
+				<body name="1R_Link" pos="0.3 0.2 -0.15" euler="0 0 0.0">
+					<joint name="1R_Joint" axis="0 1 0" pos="0.08 -0.03 0.27"/>
+					<inertial pos="0 0 0" mass="0.05" diaginertia="0.005 0.005 0.005"/>
+					<geom mesh="1R_foot" type="mesh" euler="0 0 0" pos="0.0 0.0 0.0" material="blue"/>
+				</body> 
 			</body>
         </body>
     </body>
@@ -86,7 +91,12 @@
   </worldbody>
 
     <equality>
-        <connect name="lowerRightLeg_kinematic_link" active="true" body1="4R_Link" body2="3FU_Link" anchor="0.25 -0.07 -0.26"/>
-    </equality>
+        <connect name="lowerRightLeg_kinematic_link" active="true" body1="4R_Link" body2="3FU_Link" anchor="0.25 -0.05 -0.26"/>
+    </equality >
+
+	<actuator>
+		<position name="3BR" joint="3BR_Joint"/>
+		<position name="1R" joint="1R_Joint"/>
+	</actuator>
 
 </mujoco>
