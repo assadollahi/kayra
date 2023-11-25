@@ -48,7 +48,7 @@
     <geom name="floor" size="0 0 .05" type="plane" material="grid" condim="3"/>
 
 
-    <body name="6Hip_Link" pos="-0.3 0.0 4.0" euler= "1.57 0.0 -0.0">
+    <body name="6Hip_Link" pos="-0.3 0.0 4.0" euler= "1.8 0.0 0.0">
         <joint type="free"/>
 
         <inertial pos="0 0 0.1" mass="0.10" diaginertia="0.005 0.005 0.005"/>
@@ -58,8 +58,8 @@
         <geom mesh="6L_hip" type="mesh" pos="1.12 0.125 0.28" euler="0.0 1.57 -1.57" material="yellow"/>		
 
 
-		<body name="5R_Link" pos="-0.3 0.0 3.0" euler= "1.57 0.0 -0.0">
-			<joint name="5R_Joint" axis="0 1 0" pos="-0.10 -0.05 0.14"/>
+		<body name="5R_Link" pos="0.06 -0.525 -0.195" euler= "0 0 0">
+			<joint name="5R_Joint" axis="0 0 1" pos="0.34 0.27 0.2"/>
 
 			<inertial pos="0 0 0.1" mass="0.10" diaginertia="0.005 0.005 0.005"/>
 			<geom mesh="5R_hipjoint_lower" type="mesh" material="yellow"/>
@@ -120,8 +120,8 @@
 		</body>
 
 
-		<body name="5L_Link" pos="1.4 0.0 3.0" euler= "1.57 0.0 -0.0">
-			<joint name="5L_Joint" axis="0 -1 0" pos="-0.10 0.05 0.14"/>
+		<body name="5L_Link" pos="1.34 -0.525 -0.195" euler= "0 0.0 -0.0">
+			<joint name="5L_Joint" axis="0 0 1" pos="-0.34 0.27 0.2"/>
 
 			<inertial pos="0 0 0.1" mass="0.10" diaginertia="0.005 0.005 0.005"/>
 			<geom mesh="5L_hipjoint_lower" type="mesh" material="yellow"/>
@@ -193,10 +193,12 @@
     </equality >
 
 	<actuator>
+		<position name="Right Hip Joint 5R" joint="5R_Joint"/>	
 		<position name="Right Upper Calf 3BRU" joint="3BRU_Joint"/>	
 		<position name="Right Lower Calf 3BR" joint="3BR_Joint"/>
 		<position name="Right Foot 1R" joint="1R_Joint"/>
 
+		<position name="Left Hip Joint 5L" joint="5L_Joint"/>	
 		<position name="Left Upper Calf 3BLU" joint="3BLU_Joint"/>	
         <position name="Left Lower Calf 3BL" joint="3BL_Joint"/>
 		<position name="Left Foot 1L" joint="1L_Joint"/>
