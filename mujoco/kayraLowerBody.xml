@@ -49,10 +49,10 @@
         <joint type="free"/>
 
         <inertial pos="0 0 0.1" mass="0.10" diaginertia="0.005 0.005 0.005"/>
-        <geom mesh="5R_hipjoint_lower" type="mesh" material="white"/>
+        <geom mesh="5R_hipjoint_lower" type="mesh" material="yellow"/>
 
         <body name="3BRU_Link" pos="0.25 -0.39 0.17" euler="0.0 0 -1.57">
-             <joint name="3BRU_Joint" axis="0 1 0" pos="-0.10 0.0 0.14"/>
+            <joint name="3BRU_Joint" axis="0 1 0" pos="-0.10 -0.05 0.14"/>
 
             <inertial pos="0 0 0" mass="0.10" diaginertia="0.005 0.005 0.005"/>
             <geom mesh="3BR_calf" type="mesh" euler="0 0 0" pos="0.0 0.0 0.0" material="blue"/>
@@ -64,7 +64,7 @@
                 <geom mesh="4R_knee" type="mesh" material="white"/>
 
                 <body name="3BR_Link" pos="0 -0.17 -0.225" euler="1.57 0 -1.57">
-                    <joint name="3BR_Joint" axis="0 1 0" pos="-0.10 0.0 0.14"/>
+                    <joint name="3BR_Joint" axis="0 1 0" pos="-0.10 -0.06 0.14"/>
 
                     <inertial pos="0 0 0" mass="0.10" diaginertia="0.005 0.005 0.005"/>
                     <geom mesh="3BR_calf" type="mesh" euler="0 0 0" pos="0.0 0.0 0.0" material="white"/>
@@ -88,41 +88,74 @@
                             <geom mesh="1R_foot" type="mesh" euler="0 0 0" pos="0.0 0.0 0.0" material="blue"/>
                         </body> 
                     </body>
+
                 </body>
+
+				<body name="3FURU_Link" pos="0.0 -0.020 0.60" euler="-1.57 0 0">
+					<joint name="3FURU_Joint" axis="1 0 0" pos="-0.04 0.325 -0.03"/>
+
+					<inertial pos="0 0 0" mass="0.05" diaginertia="0.005 0.005 0.005"/>
+					<geom mesh="3FU_shin" type="mesh" euler="0 0 0" pos="0.0 0.0 0.0" material="yellow"/>
+				</body> 
+
             </body>
 
         </body>
     </body>
-    
-    <body name="4L_Link" pos="1 0 1.8" euler= "-0.0 0.0 0.0">
+
+
+    <body name="5L_Link" pos="1.4 0.0 3.0" euler= "1.57 0.0 -0.0">
         <joint type="free"/>
 
         <inertial pos="0 0 0.1" mass="0.10" diaginertia="0.005 0.005 0.005"/>
-        <geom mesh="4L_knee" type="mesh" material="white"/>
+        <geom mesh="5L_hipjoint_lower" type="mesh" material="yellow"/>
 
-        <body name="3BL_Link" pos="0 -0.17 -0.225" euler="1.57 0 -1.57">
-             <joint name="3BL_Joint" axis="0 1 0" pos="-0.10 0.0 0.14"/>
+        <body name="3BLU_Link" pos="-0.25 -0.39 0.17" euler="0.0 0 -1.57">
+             <joint name="3BLU_Joint" axis="0 -1 0" pos="-0.10 0.05 0.14"/>
 
             <inertial pos="0 0 0" mass="0.10" diaginertia="0.005 0.005 0.005"/>
-            <geom mesh="3BL_calf" type="mesh" euler="3.14 0 0" pos="0.0 0.0 0.0" material="white"/>
+            <geom mesh="3BL_calf" type="mesh" euler="3.14 0 0" pos="0.0 0.0 0.0" material="blue"/>
 
-			<body name="2L_Link" pos="1.0 0.3 0.2" euler= "0 -1.57 1.57">
-				<joint name="2L_Joint" axis="1 0 0" pos="0.23 0.05 0.45"/>
+			<body name="4L_Link" pos="0.675 0 -0.18" euler= "0.0 -1.57 1.57">
+                <joint name="4L_Joint" axis="-1 0 0" pos="0.1 -0.31 0.13"/>
 
-				<inertial pos="0 0 0.1" mass="0.05" diaginertia="0.005 0.005 0.005"/>
-				<geom mesh="2L_footJoint" type="mesh" material="yellow"/>
+				<inertial pos="0 0 0.1" mass="0.10" diaginertia="0.005 0.005 0.005"/>
+				<geom mesh="4L_knee" type="mesh" material="white"/>
 
-				<body name="3FUL_Link" pos="-0.3 0.35 0.62" euler="-1.57 0 0">
-					<joint name="3FUL_Joint" axis="1 0 0" pos="-0.03 0.3 -0.03"/>
+				<body name="3BL_Link" pos="0 -0.17 -0.225" euler="1.57 0 -1.57">
+					<joint name="3BL_Joint" axis="0 -1 0" pos="-0.10 0.06 0.14"/>
+
+					<inertial pos="0 0 0" mass="0.10" diaginertia="0.005 0.005 0.005"/>
+					<geom mesh="3BL_calf" type="mesh" euler="3.14 0 0" pos="0.0 0.0 0.0" material="white"/>
+
+					<body name="2L_Link" pos="1.0 0.3 0.2" euler= "0 -1.57 1.57">
+						<joint name="2L_Joint" axis="-1 0 0" pos="-0.23 0.05 0.45"/>
+
+						<inertial pos="0 0 0.1" mass="0.05" diaginertia="0.005 0.005 0.005"/>
+						<geom mesh="2L_footJoint" type="mesh" material="yellow"/>
+
+						<body name="3FUL_Link" pos="-0.3 0.35 0.62" euler="-1.57 0 0">
+							<joint name="3FUL_Joint" axis="-1 0 0" pos="0.02 0.3 -0.03"/>
+
+							<inertial pos="0 0 0" mass="0.05" diaginertia="0.005 0.005 0.005"/>
+							<geom mesh="3FU_shin" type="mesh" euler="0 0 0" pos="0.0 0.0 0.0" material="blue"/>
+						</body> 
+
+						<body name="1L_Link" pos="-0.3 0.2 -0.15" euler="0 0 0.0">
+							<joint name="1L_Joint" axis="0 1 0" pos="-0.08 -0.03 0.27"/>
+							<inertial pos="0 0 0" mass="0.05" diaginertia="0.005 0.005 0.005"/>
+							<geom mesh="1L_foot" type="mesh" euler="0 0 0" pos="0.0 0.0 0.0" material="blue"/>
+						</body> 
+					</body>
+
+
+				</body>
+
+				<body name="3FULU_Link" pos="0.0 -0.020 0.60" euler="-1.57 0 0">
+					<joint name="3FULU_Joint" axis="-1 0 0" pos="0.04 0.325 -0.03"/>
 
 					<inertial pos="0 0 0" mass="0.05" diaginertia="0.005 0.005 0.005"/>
-					<geom mesh="3FU_shin" type="mesh" euler="0 0 0" pos="0.0 0.0 0.0" material="blue"/>
-				</body> 
-
-				<body name="1L_Link" pos="-0.3 0.2 -0.15" euler="0 0 0.0">
-					<joint name="1L_Joint" axis="0 1 0" pos="0.08 -0.03 0.27"/>
-					<inertial pos="0 0 0" mass="0.05" diaginertia="0.005 0.005 0.005"/>
-					<geom mesh="1L_foot" type="mesh" euler="0 0 0" pos="0.0 0.0 0.0" material="blue"/>
+					<geom mesh="3FU_shin" type="mesh" euler="0 0 0" pos="0.0 0.0 0.0" material="yellow"/>
 				</body> 
 			</body>
         </body>
@@ -133,13 +166,18 @@
     <equality>
         <connect name="lowerRightLeg_kinematic_link" active="true" body1="4R_Link" body2="3FUR_Link" anchor="0.25 -0.05 -0.26"/>
         <connect name="lowerLeftLeg_kinematic_link" active="true" body1="4L_Link" body2="3FUL_Link" anchor="0.25 -0.05 -0.26"/>
+
+		<connect name="upperRightLeg_kinematic_link" active="true" body1="5R_Link" body2="3FURU_Link" anchor="0.5 -0.14 0.04"/>
+		<connect name="upperLeftLeg_kinematic_link" active="true" body1="5L_Link" body2="3FULU_Link" anchor="-0.5 -0.14 0.04"/>
     </equality >
 
 	<actuator>
-		<position name="Right Calf 3BR" joint="3BR_Joint"/>
+		<position name="Right Upper Calf 3BRU" joint="3BRU_Joint"/>	
+		<position name="Right Lower Calf 3BR" joint="3BR_Joint"/>
 		<position name="Right Foot 1R" joint="1R_Joint"/>
 
-        <position name="Left Calf 3BL" joint="3BL_Joint"/>
+		<position name="Left Upper Calf 3BLU" joint="3BLU_Joint"/>	
+        <position name="Left Lower Calf 3BL" joint="3BL_Joint"/>
 		<position name="Left Foot 1L" joint="1L_Joint"/>
 	</actuator>
 
