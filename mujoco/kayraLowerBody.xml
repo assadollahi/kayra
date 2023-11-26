@@ -48,7 +48,7 @@
     <geom name="floor" size="0 0 .05" type="plane" material="grid" condim="3"/>
 
 
-    <body name="6Hip_Link" pos="-0.3 0.0 4.0" euler= "1.8 0.0 0.0">
+    <body name="6Hip_Link" pos="-0.3 0.0 3.0" euler= "1.57 0.0 0.0">
         <joint type="free"/>
 
         <inertial pos="0 0 0.1" mass="0.10" diaginertia="0.005 0.005 0.005"/>
