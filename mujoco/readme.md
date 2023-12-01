@@ -1,11 +1,17 @@
 this directory containing all the files for simulating Kayra in MuJoCo
 the XML files refer via relative links to the STL files.
 
-to install mujoco, just use pip install mujoco, see here for more details:
+to install mujoco, just use pip3 install mujoco, see here for more details:
 https://mujoco.readthedocs.io/en/stable/python.html
 
 for exploring kayra's mujoco files, start the mujoco viewer using 
 python3 -m mujoco.viewer and load one of the XML files
+
+assuming that you have cloned kayra's git repo to home, you can also call the viewer with a file
+python3 -m mujoco.viewer --mjcf=~/kayra/mujoco/kayraLowerBody.xml
+
+there is also a separate viewer that has no controls:
+pip3 install mujoco-python-viewer
 
 inspirations on learning how to build a robot in mujoco:
 https://studywolf.wordpress.com/2020/03/22/building-models-in-mujoco/
