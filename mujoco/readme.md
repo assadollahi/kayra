@@ -10,6 +10,10 @@ python3 -m mujoco.viewer and load one of the XML files
 assuming that you have cloned kayra's git repo to home, you can also call the viewer with a file
 python3 -m mujoco.viewer --mjcf=~/kayra/mujoco/kayraLowerBody.xml
 
+for working with plots and animations you need:
+apt update && apt install -y ffmpeg
+pip install -q mediapy
+
 there is also a separate viewer that has no controls:
 pip3 install mujoco-python-viewer
 
