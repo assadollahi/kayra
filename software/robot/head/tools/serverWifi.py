@@ -5,10 +5,10 @@ import sys
 wlan_sta = network.WLAN(network.STA_IF)
 if wlan_sta.isconnected():
     print("wifi is connected")
-    #print("IP details: " + str(station.ifconfig()))
+    print("IP details: " + str(station.ifconfig()))
 
 serversocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-host = "192.168.0.101" #"192.168.0.100"
+host = "192.168.0.100" #"192.168.0.100"
 port = 8000
 
 # allow for re-use of addresses
@@ -36,7 +36,9 @@ print ("server started and listening at " + str(host) + ", port: " + str(port))
 '''
 while 1:
     clientsocket, address = serversocket.accept()
-    client(clientsocket, address)
+    #client(clientsocket, address)
+    print("got connection from :", str(address))
+    clientsocket.send("connection established")
 '''
 
 clientsocket, addr = serversocket.accept()
@@ -51,7 +53,7 @@ while True:
     
     sendData = input("send: ")
     clientsocket.send(sendData.encode())
-    
+
 print("closing connection")
 clientsocket.close()
 sys.exit()
