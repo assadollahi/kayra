@@ -1,8 +1,7 @@
 import math
 
-#print(math.asin(0))
-#print(math.acos(0))
-#print(math.atan(0))
+# all this is taken from the wonderful tutorial:
+# https://dream-drive.net/robot/asi.htm
 
 a: float = 10.0 # shin length
 
