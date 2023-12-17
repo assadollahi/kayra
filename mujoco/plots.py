@@ -3,13 +3,13 @@ import itertools
 import numpy as np
 from typing import Callable, NamedTuple, Optional, Union, List
 
-import mediapy as media
+import cv2
 import matplotlib.pyplot as plt
 
 import mujoco
 
 # More legible printing from numpy.
-np.set_printoptions(precision=3, suppress=True, linewidth=100)
+#np.set_printoptions(precision=3, suppress=True, linewidth=100)
 
 free_body_MJCF = """
 <mujoco>
@@ -41,9 +41,12 @@ data = mujoco.MjData(model)
 mujoco.mj_forward(model, data)
 
 renderer.update_scene(data, "fixed")
-media.show_image(renderer.render())
 
-'''
+im = renderer.render()
+#cv2.imshow("image", im)
+#cv2.waitKey(0)
+
+
 n_steps = 499
 
 # allocate
@@ -68,12 +71,12 @@ for i in range(n_steps):
   acceleration[i] = data.qacc[:]
   # iterate over active contacts, save force and distance
   for j,c in enumerate(data.contact):
+   # print("contact " + str(j) + c.geom[0].mjGEOM_LABEL + "->" + c.geom[1].mjGEOM_LABEL)
+
     mujoco.mj_contactForce(model, data, j, forcetorque)
     force[i] += forcetorque[0:3]
     penetration[i] = min(penetration[i], c.dist)
-  # we could also do
-  # force[i] += data.qfrc_constraint[0:3]
-  # do you see why?
+
 
 # plot
 _, ax = plt.subplots(3, 2, sharex=True, figsize=(10, 10))
@@ -83,6 +86,7 @@ ax[0,0].set_title('contact force')
 ax[0,0].set_ylabel('Newton')
 ax[0,0].legend(iter(lines), ('normal z', 'friction x', 'friction y'));
 
+#matplotlib.pyplot.imshow
 ax[1,0].plot(sim_time, acceleration)
 ax[1,0].set_title('acceleration')
 ax[1,0].set_ylabel('(meter,radian)/s/s')
@@ -105,11 +109,12 @@ mg = model.body("box_and_sphere").mass[0] * z_gravity
 mg_line = ax[1,1].plot(sim_time, np.ones(n_steps)*mg, label='m*g', linewidth=1)
 ax[1,1].legend()
 
+ax[2,1].imshow(im) 
+'''
 ax[2,1].plot(sim_time, 1000*penetration)
 ax[2,1].set_title('penetration depth')
 ax[2,1].set_ylabel('millimeter')
 ax[2,1].set_xlabel('second')
-
-plt.tight_layout()
-plt.show()
 '''
+#plt.tight_layout()
+plt.show()
