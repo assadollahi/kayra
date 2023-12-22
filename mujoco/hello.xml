@@ -3,7 +3,7 @@
 
   <asset>
     <material name="black" rgba="0.0 0.5 0.5 1"/>
-    <mesh name="1L_foot" file="/Users/ramin/kayra/STL/1L_foot-Body.stl"/>
+    <mesh name="1L_foot" file="../STL/1L_foot-Body.stl"/>
   </asset>  
 
   <worldbody>
