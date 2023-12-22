@@ -13,6 +13,7 @@
     <material name="blue" rgba="0.23 0.51 0.74 1"/>
     <material name="yellow" rgba="0.99 0.74 0.0 1"/>
     <material name="white" rgba="0.98 0.98 0.97 1"/>
+	<material name="red" rgba="0.80 0.0 0.0 1"/>
     <material name="black" rgba="0.0 0.0 0.0 1"/>
 
     <material name="grid" texture="grid" texrepeat="1 1" texuniform="true" reflectance=".2"/>
@@ -75,7 +76,7 @@
 					<joint name="4R_Joint" axis="1 0 0" pos="-0.10 -0.31 0.13"/>
 
 					<inertial pos="0 0 0.1" mass="0.10" diaginertia="0.005 0.005 0.005"/>
-					<geom mesh="4R_knee" type="mesh" material="white"/>
+					<geom mesh="4R_knee" type="mesh" material="red"/>
 
 					<body name="3BR_Link" pos="0 -0.17 -0.225" euler="1.57 0 -1.57">
 						<joint name="3BR_Joint" axis="0 1 0" pos="-0.10 -0.06 0.14"/>
@@ -137,7 +138,7 @@
 					<joint name="4L_Joint" axis="-1 0 0" pos="0.1 -0.31 0.13"/>
 
 					<inertial pos="0 0 0.1" mass="0.10" diaginertia="0.005 0.005 0.005"/>
-					<geom mesh="4L_knee" type="mesh" material="white"/>
+					<geom mesh="4L_knee" type="mesh" material="red"/>
 
 					<body name="3BL_Link" pos="0 -0.17 -0.225" euler="1.57 0 -1.57">
 						<joint name="3BL_Joint" axis="0 -1 0" pos="-0.10 0.06 0.14"/>
