@@ -54,24 +54,24 @@
         <joint type="free"/>
 
         <inertial pos="0 0 0.1" mass="0.10" diaginertia="0.005 0.005 0.005"/>
-        <geom mesh="6F_hipfront" type="mesh" pos="0.7 0.0 0.3" euler="90 -0.0 0.0" material="blue"/>
-        <geom mesh="6F_hipback" type="mesh" pos="0.7 -0.0 -0.165" euler="90 0.0 0" material="blue"/>		
-        <geom mesh="6R_hip" type="mesh" pos="0.28 0.125 0.28" euler="0.0 90 -90" material="yellow"/>
-        <geom mesh="6L_hip" type="mesh" pos="1.12 0.125 0.28" euler="0.0 90 -90" material="yellow"/>		
+        <geom mesh="6F_hipfront" type="mesh" pos="0.705 -0.043 -0.215" euler="90 180.0 180.0" material="white"/>
+        <geom mesh="6F_hipback" type="mesh" pos="0.705 -0.043 0.215" euler="90 180.0 180" material="blue"/>		
+        <geom mesh="6R_hip" type="mesh" pos="0.28 -0.19 -0.001" euler="0.0 90 -90" material="red"/>
+        <geom mesh="6L_hip" type="mesh" pos="1.13 -0.19 -0.001" euler="0.0 90 -90" material="red"/>		
 
 
-		<body name="5R_Link" pos="0.06 -0.525 -0.195" euler= "0 0 0">
+		<body name="5R_Link" pos="-0.03 -0.525 -0.195" euler= "0 0 0">
 			<joint name="5R_Joint" axis="0 0 1" pos="0.34 0.27 0.2"/>
 
 			<inertial pos="0 0 0.1" mass="0.10" diaginertia="0.005 0.005 0.005"/>
-			<geom mesh="5R_hipjoint_lower" type="mesh" euler= "90.0 180 -0.0" material="yellow"/>
-			<geom mesh="5R_hipjoint_upper" type="mesh" euler= "0.0 0 -0.0" pos="0.24 0.021 0.25" material="blue"/>		
+			<geom mesh="5R_hipjoint_upper" type="mesh" euler= "0.0 0 -0.0" pos="0.33 -0.015 0.17" material="yellow"/>	
+			<geom mesh="5R_hipjoint_lower" type="mesh" euler= "90.0 180 -0.0" pos="0.33 -0.055 0.17"  material="blue"/>	
 
 			<body name="3BRU_Link" pos="0.25 -0.39 0.17" euler="0.0 0 -90">
 				<joint name="3BRU_Joint" axis="0 1 0" pos="-0.10 -0.05 0.14"/>
 
 				<inertial pos="0 0 0" mass="0.10" diaginertia="0.005 0.005 0.005"/>
-				<geom mesh="3BR_calf" type="mesh" euler="0 0 180" pos="0.1125 0.105 -0.01" material="blue"/>
+				<geom mesh="3BR_calf" type="mesh" euler="0 0 180" pos="0.1125 0.105 -0.01" material="yellow"/>
 
 				<body name="4R_Link" pos="0.675 0.0 -0.18" euler= "0.0 -90 90">
 					<joint name="4R_Joint" axis="1 0 0" pos="-0.10 -0.31 0.13"/>
@@ -122,18 +122,18 @@
 		</body>
 
 
-		<body name="5L_Link" pos="1.34 -0.525 -0.195" euler= "0 0.0 -0.0">
+		<body name="5L_Link" pos="1.44 -0.525 -0.195" euler= "0 0.0 -0.0">
 			<joint name="5L_Joint" axis="0 0 1" pos="-0.34 0.27 0.2"/>
 
 			<inertial pos="0 0 0.1" mass="0.10" diaginertia="0.005 0.005 0.005"/>
-			<geom mesh="5L_hipjoint_lower" type="mesh" euler= "90.0 180 -0.0" material="yellow"/>
-			<geom mesh="5L_hipjoint_upper" type="mesh" pos="-0.24 0.021 0.25" euler= "0.0 0 -0.0" material="blue"/>	
+			<geom mesh="5L_hipjoint_upper" type="mesh" pos="-0.33 -0.015 0.17" euler= "0.0 0 -0.0" material="yellow"/>	
+			<geom mesh="5L_hipjoint_lower" type="mesh" pos="-0.33 -0.055 0.17"  euler= "90.0 180 -0.0" material="blue"/>
 
 			<body name="3BLU_Link" pos="-0.25 -0.39 0.17" euler="0.0 0 -90">
 				<joint name="3BLU_Joint" axis="0 -1 0" pos="-0.10 0.05 0.14"/>
 
 				<inertial pos="0 0 0" mass="0.10" diaginertia="0.005 0.005 0.005"/>
-				<geom mesh="3BL_calf" type="mesh" euler="180 180 0" pos="0.1125 -0.105 -0.01" material="blue"/>
+				<geom mesh="3BL_calf" type="mesh" euler="180 180 0" pos="0.1125 -0.105 -0.01" material="yellow"/>
 
 				<body name="4L_Link" pos="0.675 0 -0.18" euler= "0.0 -90 90">
 					<joint name="4L_Joint" axis="-1 0 0" pos="0.1 -0.31 0.13"/>
