@@ -50,7 +50,7 @@
     <geom name="floor" size="0 0 .05" type="plane" material="grid" condim="3"/>
 
 
-    <body name="6Hip_Link" pos="-0.3 0.0 3.0" euler= "90 0.0 0.0">
+    <body name="6Hip_Link" pos="-0.3 0.0 2.975" euler= "90 0.0 0.0">
         <joint type="free"/>
 
         <inertial pos="0 0 0.1" mass="0.10" diaginertia="0.005 0.005 0.005"/>
@@ -94,14 +94,14 @@
 							<geom mesh="servoBlock" type="mesh" euler="90 0 0" pos="0.27 0.40 0.12" material="black"/>
 
 							<body name="3FUR_Link" pos="0.3 0.35 0.62" euler="-90 0 0">
-								<joint name="3FUR_Joint" axis="1 0 0" pos="-0.03 0.3 -0.03"/>
+								<joint name="3FUR_Joint" axis="1 0 0" pos="-0.03 0.33 -0.02"/>
 
 								<inertial pos="0 0 0" mass="0.05" diaginertia="0.005 0.005 0.005"/>
 								<geom mesh="3FU_shin" type="mesh" euler="90 0 90" pos="0.08 0.005 -0.25" material="blue"/>
 							</body> 
 
 							<body name="1R_Link" pos="0.3 0.2 -0.15" euler="0 0 0.0">
-								<joint name="1R_Joint" axis="0 1 0" pos="0.08 -0.03 0.27"/>
+								<joint name="1R_Joint" axis="0 1 0" pos="0.15 -0.07 0.27"/>
 								<inertial pos="0 0 0" mass="0.05" diaginertia="0.005 0.005 0.005"/>
 								<geom mesh="1R_foot" type="mesh" euler="0 0 0" pos="0.0 0.0 0.0" material="blue"/>
 							</body> 
@@ -156,14 +156,14 @@
 							<geom mesh="servoBlock" type="mesh" euler="90 0 0" pos="-0.345 0.40 0.115" material="black"/>						
 
 							<body name="3FUL_Link" pos="-0.3 0.35 0.62" euler="-90 0 0">
-								<joint name="3FUL_Joint" axis="-1 0 0" pos="0.02 0.3 -0.03"/>
+								<joint name="3FUL_Joint" axis="-1 0 0" pos="0.03 0.33 -0.02"/>
 
 								<inertial pos="0 0 0" mass="0.05" diaginertia="0.005 0.005 0.005"/>
 								<geom mesh="3FU_shin" type="mesh" euler="90 0 90" pos="-0.08 0.005 -0.25" material="blue"/>
 							</body> 
 
 							<body name="1L_Link" pos="-0.3 0.2 -0.15" euler="0 0 0.0">
-								<joint name="1L_Joint" axis="0 1 0" pos="-0.08 -0.03 0.27"/>
+								<joint name="1L_Joint" axis="0 1 0" pos="-0.15 -0.07 0.27"/>
 								<inertial pos="0 0 0" mass="0.05" diaginertia="0.005 0.005 0.005"/>
 								<geom mesh="1L_foot" type="mesh" euler="0 0 0" pos="0.0 0.0 0.0" material="blue"/>
 							</body> 
