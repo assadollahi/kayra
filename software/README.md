@@ -37,10 +37,9 @@ interaction of the two softwares:
 
 
 virtual environment & git:
-python3 -m venv .venv
-source .venv/bin/activate.fish (for fish shell)
-source .venv/bin/activate
-echo '.venv' > .gitignore
-pip list (should deliver a short list of installed packages)
-(install python packages)
-pip freeze > requirements.txt
+- python3 -m venv .venv
+- source .venv/bin/activate.fish or  source .venv/bin/activate
+- echo '.venv' > .gitignore
+- pip list (should deliver a short list of installed packages)
+- (install python packages)
+- pip freeze > requirements.txt

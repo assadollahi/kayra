@@ -1,0 +1,5 @@
+future==1.0.0
+iso8601==2.1.0
+numpy==1.26.4
+pyserial==3.5
+PyYAML==6.0.1
