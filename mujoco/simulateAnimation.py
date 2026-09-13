@@ -2,14 +2,24 @@ import time
 import json
 import copy
 import math
+import os
+import sys
 import mujoco
 import mujoco.viewer
 
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "software"))
+from servoMapLib import loadServoMap
+
+# which servo channel drives which MuJoCo actuator
+servoMap = loadServoMap()
+
+# the channels that kayraLowerBody.xml actually models, as (servoNumber, actuator, sign)
+mujocoActuatorList = servoMap.mujocoActuators()
 
 # this is taken from kayra/softwre/host/interactiveServo.py
 # servos
 servoNumber = 0 # current servo to be controlled
-servoValues = [0.0] * 18 # storing all servo values
+servoValues = [0.0] * servoMap.servoCount # storing all servo values
 servoStep = 10 # moving servo by this angle on key press
 
 # poses
@@ -17,7 +27,7 @@ poseName = "neutral" # name of the current pose
 poseHighlighted = "" # for editing animations
 poseNumber = 0
 poseDictionary = {} # dictionary of posture names and their servoValues
-poseDictionary[poseName] = servoValues
+poseDictionary[poseName] = copy.deepcopy(servoValues)
 
 # animation
 animationName = "first"
@@ -35,17 +45,11 @@ def key_callback(keycode):
     angle += 0.1
 
 def setAllServos(inServoValues, inMjData):
-  inMjData.actuator("Right Foot 1R").ctrl = math.radians(-inServoValues[0])
-  inMjData.actuator("Left Foot 1L").ctrl = math.radians(-inServoValues[1])
-
-  inMjData.actuator("Right Lower Calf 3BR" ).ctrl = math.radians(-inServoValues[2])
-  inMjData.actuator("Left Lower Calf 3BL" ).ctrl = math.radians(-inServoValues[3])
-
-  inMjData.actuator("Right Upper Calf 3BRU" ).ctrl = math.radians(-inServoValues[4])
-  inMjData.actuator("Left Upper Calf 3BLU").ctrl = math.radians(-inServoValues[5])
-
-  inMjData.actuator("Right Hip Joint 5R").ctrl = math.radians(-inServoValues[6])
-  inMjData.actuator("Left Hip Joint 5L").ctrl = math.radians(-inServoValues[7])
+  # drive every simulated joint straight from the servo map, so the channel
+  # numbering and the sign convention only exist in servoMap.json
+  for eachServoNumber, eachActuatorName, eachSign in mujocoActuatorList:
+    servoValue = servoMap.clamp(eachServoNumber, inServoValues[eachServoNumber])
+    inMjData.actuator(eachActuatorName).ctrl = math.radians(eachSign * servoValue)
 
 
 def loadServoControl():
@@ -53,7 +57,9 @@ def loadServoControl():
   global poseDictionary, poseName, poseHighlighted, poseNumber
   global animationNumber, animationName, animationDictionary, animationStep
 
-  with open("../software/host/servoControl.json", 'r') as f:
+  controlPath = os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                             "..", "software", "host", "servoControl.json")
+  with open(controlPath, 'r') as f:
     inDictionary = json.load(f)	
 
   animationDictionary = copy.deepcopy(inDictionary["animations"])

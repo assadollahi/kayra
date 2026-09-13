@@ -3,11 +3,19 @@
 import curses
 import curses.ascii
 import copy
+import os
+import sys
 import serial
 import serial.tools.list_ports
 import time
 import json
 import numpy as np
+
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), ".."))
+from servoMapLib import loadServoMap
+
+# which servo channel drives which joint, and the software limits
+servoMap = loadServoMap()
 
 # connections
 currentPort = 0 # first serial port 
@@ -16,7 +24,7 @@ serialSelected = False
 
 # servos
 servoNumber = 0 # current servo to be controlled
-servoValues = [0.0] * 18 # storing all servo values
+servoValues = [0.0] * servoMap.servoCount # storing all servo values
 servoStep = 10 # moving servo by this angle on key press
 
 # poses
@@ -24,7 +32,7 @@ poseName = "neutral" # name of the current pose
 poseHighlighted = "" # for editing animations
 poseNumber = 0
 poseDictionary = {} # dictionary of posture names and their servoValues
-poseDictionary[poseName] = servoValues
+poseDictionary[poseName] = copy.deepcopy(servoValues)
 
 # animation
 animationName = "first"
@@ -83,7 +91,9 @@ def sendCommand(inCommand):
     serialPort.write((inCommand + "\n").encode('ASCII'))
 
 def setAllServos(inServoValues):
-    stringValues = [str(x) for x in inServoValues] 
+    # never send a pose that would drive a joint past its software limits
+    clampedValues = servoMap.clampAll(inServoValues)
+    stringValues = [str(x) for x in clampedValues] 
     sendCommand("sas " + " ".join(stringValues) + "\n")   
 
 def storeNamedPose(inPoseName, inServoValues):
@@ -106,7 +116,20 @@ def playSingleAnimation(inAnimName):
 
 def setUntetheredAnimation(inAnimName):
     # set animation to be played when untethered and user button is pressed
-    sendCommand("sua " + inAnimName + "\n")
+    sendCommand("tua " + inAnimName + "\n")
+
+def setSingleServoClamped(inServoNumber, inServoValue):
+    # keep the servo inside the limits from servoMap.json and report what happened
+    clampedValue = servoMap.clamp(inServoNumber, inServoValue)
+
+    sendCommand("sss " + str(inServoNumber) + " " + str(clampedValue))
+
+    outStr = "servo " + str(inServoNumber) + " (" + servoMap.describe(inServoNumber) + ") set to " + str(clampedValue)
+    if clampedValue != inServoValue:
+        limitMin, limitMax = servoMap.limits(inServoNumber)
+        outStr += "   [limited to " + str(limitMin) + ".." + str(limitMax) + "]"
+
+    return clampedValue, outStr
 
 def controlUI(stdscr):
 
@@ -180,24 +203,22 @@ def controlUI(stdscr):
             elif inputMode == "pose_edit":
                     
                 if keypress == curses.KEY_RIGHT:
-                    servoValues[servoNumber] += servoStep
-                    stdscr.addstr(3, 4, "servo " + str(servoNumber) + " set to " + str(servoValues[servoNumber]))
+                    servoValues[servoNumber], statusStr = setSingleServoClamped(servoNumber, servoValues[servoNumber] + servoStep)
+                    stdscr.addstr(3, 4, statusStr)
                     poseDictionary[poseName] = copy.deepcopy(servoValues)
-                    sendCommand("sss " + str(servoNumber)+ " " + str(servoValues[servoNumber])) 
 
                 if keypress == curses.KEY_LEFT:
-                    servoValues[servoNumber] -= servoStep
-                    stdscr.addstr(3, 4, "servo " + str(servoNumber) + " set to " + str(servoValues[servoNumber]))
-                    poseDictionary[poseName] = copy.deepcopy(servoValues) 
-                    sendCommand("sss " + str(servoNumber)+ " " + str(servoValues[servoNumber]))
+                    servoValues[servoNumber], statusStr = setSingleServoClamped(servoNumber, servoValues[servoNumber] - servoStep)
+                    stdscr.addstr(3, 4, statusStr)
+                    poseDictionary[poseName] = copy.deepcopy(servoValues)
 
                 if keypress == curses.KEY_DOWN:
                     servoNumber += 1
                     
-                    if (servoNumber > 17):
-                        servoNumber = 17
+                    if (servoNumber > (servoMap.servoCount - 1)):
+                        servoNumber = servoMap.servoCount - 1
                         
-                    stdscr.addstr(3, 4, "servo " + str(servoNumber) + " selected: " + str(servoValues[servoNumber]))
+                    stdscr.addstr(3, 4, "servo " + str(servoNumber) + " (" + servoMap.describe(servoNumber) + ") selected: " + str(servoValues[servoNumber]))
                        
                 if keypress == curses.KEY_UP:
                     servoNumber -= 1
@@ -205,7 +226,7 @@ def controlUI(stdscr):
                     if (servoNumber < 0):
                         servoNumber = 0
                     
-                    stdscr.addstr(3, 4, "servo " + str(servoNumber) + " selected: " + str(servoValues[servoNumber]))
+                    stdscr.addstr(3, 4, "servo " + str(servoNumber) + " (" + servoMap.describe(servoNumber) + ") selected: " + str(servoValues[servoNumber]))
             
             elif inputMode == "pose":
                 
@@ -392,9 +413,9 @@ def controlUI(stdscr):
                     stdscr.addstr(3, 4, "servoStep set to " + str(servoStep))     
                 
                 if keypress == ord('z'):
-                    stdscr.addstr(3, 4, "set servo " + str(servoNumber) + " to zero")
-                    servoValues[servoNumber] = 0
-                    sendCommand("sss " + str(servoNumber)+ " " + str(servoValues[servoNumber]) + "\n")     
+                    servoValues[servoNumber], statusStr = setSingleServoClamped(servoNumber, 0.0)
+                    stdscr.addstr(3, 4, statusStr)
+                    poseDictionary[poseName] = copy.deepcopy(servoValues)
                                 
                 if keypress == ord('p'):
                     inputMode = "pose"
@@ -607,15 +628,30 @@ def controlUI(stdscr):
             # control mode in pose, i.e. change the servo values for the current pose
             stdscr.addstr(2, 4, "edit mode for pose " + poseName)
             # print out overview
-            stdscr.addstr(4, 4, "servos nubmers and their values:")
+            stdscr.addstr(4, 4, "servo channels, their joints and their values:")
 
             lineCounter = 5
             for eachSingleServo in servoValues:
                 servoNumberToDisplay = lineCounter - 5
+                servoLine = "{:2d}  {:16s} {:8s} {:7.1f}".format(
+                    servoNumberToDisplay,
+                    servoMap.name(servoNumberToDisplay),
+                    "[" + servoMap.servo(servoNumberToDisplay)["side"] + " " + servoMap.servo(servoNumberToDisplay)["chain"] + "]",
+                    eachSingleServo)
+
+                # mark channels whose joint assignment is not confirmed on hardware yet
+                if not servoMap.servo(servoNumberToDisplay)["verified"]:
+                    servoLine += "  ?"
+                if not servoMap.isEnabled(servoNumberToDisplay):
+                    servoLine += "  unused"
+
                 if servoNumberToDisplay == servoNumber:
-                    stdscr.addstr(lineCounter, 4, str(servoNumberToDisplay) + ": " + str(eachSingleServo), curses.A_REVERSE)
+                    stdscr.addstr(lineCounter, 4, servoLine, curses.A_REVERSE)
+                elif servoMap.isClamped(servoNumberToDisplay, eachSingleServo):
+                    # value in the pose is outside the software limits
+                    stdscr.addstr(lineCounter, 4, servoLine, curses.color_pair(2))
                 else:
-                    stdscr.addstr(lineCounter, 4, str(servoNumberToDisplay) + ": " + str(eachSingleServo))
+                    stdscr.addstr(lineCounter, 4, servoLine)
                 lineCounter += 1
             
         elif inputMode == "text":

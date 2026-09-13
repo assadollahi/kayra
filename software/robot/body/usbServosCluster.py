@@ -47,6 +47,12 @@ TIME_FOR_EACH_MOVE = 0.50  # The time to travel between each value. 32 is nice, 
 UPDATES_PER_MOVE = TIME_FOR_EACH_MOVE * UPDATES # 50 * 0.32 = 16
 USE_COSINE = False       # Whether or not to use a cosine path between values
 
+# software limits per channel, filled from servoMap.json below.
+# defaults are wide open so that the firmware still runs without the map file.
+servoMin = [-90.0] * TOTAL_SERVOS
+servoMax = [90.0] * TOTAL_SERVOS
+servoEnabled = [True] * TOTAL_SERVOS
+
 # servos & poses
 servoValues = [0.0] * TOTAL_SERVOS # servo values for the current posture
 nextServoValues = [0.0] * TOTAL_SERVOS # servo values for the next posture provided by SAS command
@@ -81,9 +87,24 @@ def sendIMUToHost():
         '''
         print('Heading     {:4.0f} roll {:4.0f} pitch {:4.0f}'.format(*imu.euler()))
 
+def clampServo(inServoNumber, inServoValue):
+    # keep one servo inside the limits from servoMap.json
+    if not servoEnabled[inServoNumber]:
+        return 0.0
+    if inServoValue < servoMin[inServoNumber]:
+        return servoMin[inServoNumber]
+    if inServoValue > servoMax[inServoNumber]:
+        return servoMax[inServoNumber]
+    return inServoValue
+
+def clampServoValues(inServoValues):
+    # clamp a whole pose in place, the host may send anything
+    for eachServoNumber in range(0, TOTAL_SERVOS):
+        inServoValues[eachServoNumber] = clampServo(eachServoNumber, inServoValues[eachServoNumber])
+
 def setSingleServo(inServos, inServoNumber, inServoValue):
     # set servo value
-    inServos.value(inServoNumber, inServoValue)
+    inServos.value(inServoNumber, clampServo(inServoNumber, inServoValue))
                         
     # give servo time to react
     time.sleep(0.1)
@@ -91,7 +112,10 @@ def setSingleServo(inServos, inServoNumber, inServoValue):
     sendIMUToHost() 
 
 def setAllServos(inServos, inServoValues, inNextServoValues):
-    
+
+    # the interpolation walks towards inNextServoValues, so that is what has to be safe
+    clampServoValues(inNextServoValues)
+
     for update in range(0, UPDATES_PER_MOVE):
         # Calculate how far along this movement to be
         percent_along = update / UPDATES_PER_MOVE
@@ -133,6 +157,43 @@ def writeControl():
     led_bar.set_rgb(1, 120, 120, 0) # orange on LED1
     time.sleep(1.0)
     led_bar.set_rgb(1, 0, 120, 0) # green on LED1
+
+# first of all, try to load the servo map, it defines which channel drives which
+# joint and how far that joint may travel. without it the firmware still runs,
+# but nothing stops a bad host command from driving a joint into a hard stop.
+mapLoaded = False
+try:
+    inJSON = ""
+    with open("servoMap.json", 'r') as f:
+        inJSON = f.read()
+
+    if inJSON != "":
+        inMap = json.loads(inJSON)
+
+        for eachServo in inMap["servos"]:
+            eachServoNumber = eachServo["index"]
+            if eachServoNumber < TOTAL_SERVOS:
+                servoMin[eachServoNumber] = eachServo["min"]
+                servoMax[eachServoNumber] = eachServo["max"]
+                servoEnabled[eachServoNumber] = eachServo["enabled"]
+
+        # the map is only needed once, give the RAM back before loading the poses
+        inMap = None
+        inJSON = ""
+        gc.collect()
+
+        mapLoaded = True
+        print("servoMap loaded")
+        led_bar.set_rgb(2, 0, 120, 0) # green on LED2
+
+    else:
+        print("servoMap file empty")
+
+except OSError:
+    print("no servoMap file found, servo limits are not enforced")
+
+if mapLoaded == False:
+    led_bar.set_rgb(2, 120, 0, 0) # red on LED2
 
 # load a config file telling:
 # a) whether teach/tethered/PC mode or execution/untethered mode
@@ -246,15 +307,20 @@ if operationMode == "untethered":
                 # play animation specified in servoConfig file
                 for eachPose in animationDictionary[animationToPlay]:
                     
+                    # an animation may name a pose that was deleted on the host
+                    if eachPose not in poseDictionary:
+                        print("unknown pose in animation, skipped: " + eachPose)
+                        continue
+                    
                     # get next animation step
-                    for eachServoNumber in range(0,TOTAL_SERVOS-1):
+                    for eachServoNumber in range(0,TOTAL_SERVOS):
                         nextServoValues[eachServoNumber] = poseDictionary[eachPose][eachServoNumber]
                     
                     # now interpolate between the servos    
                     setAllServos(servos, servoValues, nextServoValues)
                     
                     # now copy the new values to the old state    
-                    for eachServoNumber in range(0,TOTAL_SERVOS-1):
+                    for eachServoNumber in range(0,TOTAL_SERVOS):
                         servoValues[eachServoNumber] = nextServoValues[eachServoNumber]
                         
                 # reset button press duration counter            
@@ -337,6 +403,11 @@ elif operationMode == "tethered":
                     animationName = inCommandSplit[1] 
                     
                     for eachPose in animationDictionary[animationName]:
+                        
+                        # an animation may name a pose that was deleted on the host
+                        if eachPose not in poseDictionary:
+                            print("unknown pose in animation, skipped: " + eachPose)
+                            continue
                         
                         # get next animation step
                         for eachServoNumber in range(0,TOTAL_SERVOS):
