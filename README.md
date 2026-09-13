@@ -19,6 +19,8 @@ An easy to modify, 3D printable open-source humanoid robot evolved by the commun
 
 [![Alt text](https://img.youtube.com/vi/ZpM4JqCai9M/0.jpg)](https://youtu.be/ZpM4JqCai9M)
 
+Wiring, power and how to connect the controller: [WIRING.md](WIRING.md)
+
 Folders:
 - FCStd: design files for freeCAD (Kayra is designed using the open source software freeCAD)
 - gcode: printable files for Prusa i3 MK3, PETG
