@@ -1,5 +1,13 @@
-future==1.0.0
-iso8601==2.1.0
-numpy==1.26.4
-pyserial==3.5
-PyYAML==6.0.1
+# host side dependencies, i.e. the PC that talks to the servo controller
+#
+#   python3 -m venv .venv
+#   source .venv/bin/activate
+#   pip install -r requirements.txt
+#
+# the simulation has its own list, see mujoco/requirements.txt
+#
+# minimum versions rather than exact pins, so that the list keeps working on
+# newer Python releases. run 'pip freeze' if you need to reproduce an exact setup.
+
+pyserial>=3.5      # serial connection to the Pimoroni Servo 2040
+numpy>=2.1         # euclidean distance between poses in interactiveServo.py

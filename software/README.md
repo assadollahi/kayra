@@ -64,10 +64,28 @@ interaction of the two softwares:
 - the code from main.py is used in #2 to read the IMU and send it to #1
 
 
-virtual environment & git:
-- python3 -m venv .venv
-- source .venv/bin/activate.fish or  source .venv/bin/activate
-- echo '.venv' > .gitignore
-- pip list (should deliver a short list of installed packages)
-- (install python packages)
-- pip freeze > requirements.txt
+setting up the host PC:
+
+1) serial port permission. the servo controller shows up as /dev/ttyACM0, owned by
+   root:dialout, so your user has to be in that group or every connection fails with
+   a permission error:
+     sudo usermod -aG dialout $USER
+   log out and back in afterwards, group changes do not apply to running shells.
+
+2) on Ubuntu 24.04 and later python ships without pip and without ensurepip, so
+   'python3 -m venv' would create an environment with no pip in it:
+     sudo apt install python3-venv
+
+3) virtual environment, one at the top of the repository serves everything:
+     python3 -m venv .venv
+     source .venv/bin/activate          # or activate.fish
+     pip install -r software/requirements.txt      # host: pyserial, numpy
+     pip install -r mujoco/requirements.txt        # only if you want the simulation
+   .venv is in .gitignore.
+
+4) 'pip list' should now show the packages, 'pip freeze' gives you the exact
+   versions if you ever need to reproduce a setup.
+
+note: do not run python from the top of the repository without the virtual
+environment, the mujoco directory shadows the mujoco library and 'import mujoco'
+will silently pick up the directory instead.

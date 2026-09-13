@@ -1,0 +1,15 @@
+# dependencies for the MuJoCo simulation of Kayra
+#
+#   python3 -m venv .venv
+#   source .venv/bin/activate
+#   pip install -r requirements.txt
+#
+# you do not need any hardware for this, the simulation runs on its own.
+
+mujoco>=3.2          # the simulator itself, provides 'python3 -m mujoco.viewer'
+
+# only needed by some of the scripts in this directory:
+mujoco-python-viewer  # leanViewer.py
+matplotlib            # plots.py
+opencv-python         # plots.py
+mediapy               # rendering animations, needs ffmpeg installed via apt
